@@ -1,17 +1,23 @@
 import Head from 'next/head'
 import {useState} from 'react'
+import usePosts from '../utils/query'
 
 export default function Home() {
 
-  const [state, setState] = useState({ name: '', email: ''});
+  const [state, setState] = useState({ password: '', email: ''});
 
   const handleChange = event => {
-    console.log(state.email, state.password)
-      const { name, value } = event.target;
+  const { name, value } = event.target;
       setState({
         ...state,
         [name]: value
       });
+  }
+
+  const handleSubmit = (event) =>{
+    event.preventDefault();
+    // const {data, isLoading, isError } = Query({name: "token", url: "auth", body: {senha: state.password, usuario: state.email}, type: "post"})
+    const { status, data, error, isFetching } = usePosts();
   }
 
   return (
@@ -24,18 +30,17 @@ export default function Home() {
         <div>
           <h2 className="mt-6 text-center text-4xl font-extrabold text-gray-900">Login</h2>
         </div>
-        <form className="mt-8 space-y-6" action="#" method="POST">
-          <input type="hidden" name="remember" defaultValue="true" />
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="email-address" className="sr-only">
+              <label className="sr-only">
                 Email
               </label>
               <input
                 name="email"
-                type="email"
+                type="text"
                 id="email"
-                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                // pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                 required
                 value={state.email}
                 onChange={handleChange}
@@ -44,7 +49,7 @@ export default function Home() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">
+              <label className="sr-only">
                 Senha
               </label>
               <input
@@ -71,9 +76,8 @@ export default function Home() {
 
           <div>
             <button
-              type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-md font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
->
+            >
               Entrar
             </button>
           </div>
