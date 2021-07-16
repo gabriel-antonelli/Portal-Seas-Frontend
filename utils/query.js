@@ -1,13 +1,17 @@
 import { useQuery } from "react-query";
-import axios from "axios";
+import { Requests } from "./requests";
 
-const getPosts = async () => {
-  const { data } = await axios.get(
-    "https://jsonplaceholder.typicode.com/posts"
-  );
-  return data;
-};
-
-export default function usePosts() {
-  return useQuery("posts", getPosts);
+export function useUser(email, password) {
+  const loginUser = async () => {
+    const data = await Requests({
+      url: "auth",
+      body: { senha: password, usuario: email },
+      type: "post",
+    });
+    return data;
+  };
+  return useQuery("user", loginUser, {
+    manual: true,
+    enabled: false,
+  });
 }
