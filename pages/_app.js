@@ -1,15 +1,15 @@
-import 'tailwindcss/tailwind.css'
-import '../styles/globals.css'
+import "tailwindcss/tailwind.css";
+import "../styles/globals.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }) {
   return (
-  <QueryClientProvider client={queryClient}>
-    <Component {...pageProps} />
-  </QueryClientProvider>
-  )
+    <QueryClientProvider client={queryClient}>
+        <Component {...pageProps} />
+    </QueryClientProvider>
+  );
 }
 
-export default MyApp
+export default MyApp;
