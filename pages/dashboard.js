@@ -1,7 +1,12 @@
-export default function Dashboard() {
+import { LogOut } from "../utils";
+import withAuth from "../utils/auth";
+
+function Dashboard() {
   return (
     <div>
-      <p>TESTE</p>
+      <button onClick={LogOut}>TESTE</button>
     </div>
   );
 }
+
+export default withAuth(Dashboard)

@@ -11,7 +11,6 @@ export function useUser(email, password) {
     return data;
   };
   return useQuery("user", loginUser, {
-    manual: true,
     enabled: false,
   });
 }
