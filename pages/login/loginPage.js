@@ -4,7 +4,7 @@ import {useRouter} from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 import {Login} from "../../utils";
-import Alert from "../../components/alert";
+import {Alert} from "../../components"
 import {useLogin} from "../../providers/loginQuery";
 
 export default function LoginPage() {
