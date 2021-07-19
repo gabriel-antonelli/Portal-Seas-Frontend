@@ -7,8 +7,6 @@ export default function Alert(props) {
     setShow(props.show);
   }, [props.show]);
 
-  console.log(show, props.show);
-
   return (
     show && (
       <div className="fixed md:bottom-0 md:right-0 md:m-8 w-screen md:w-full sm:max-w-sm z-50 mt-72 ">
