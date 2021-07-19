@@ -8,7 +8,7 @@ export function useListUsersQuery() {
             type: "get"
         });
     };
-    return useQuery("user", listUsers, {
+    return useQuery("listSex", listUsers, {
         enabled: false
     });
 }

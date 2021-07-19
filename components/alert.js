@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function Alert(props) {
+export function Alert(props) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {

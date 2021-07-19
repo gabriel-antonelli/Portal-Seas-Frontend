@@ -1,7 +1,8 @@
 import Router from "next/router";
-import LoginPage from "../pages/login/loginPage";
 import {useEffect, useState} from "react";
 import {useListUsersQuery} from "../providers/listUsersQuery";
+import {Loading} from "../components";
+import LoginPage from "../pages/login/loginPage";
 
 export function Login(token) {
     document.cookie = "token=Bearer " + token;
@@ -38,21 +39,25 @@ export function withAuth(Component) {
     return (pageProps) => {
         const [isLoggedIn, setLoginStatus] = useState(false);
         const {refetch} = useListUsersQuery();
-        useEffect(() => {
-            if (typeof window !== "undefined") {
+        const [loading, setLoading] = useState(true);
+
+        async function verify() {
+            if (typeof await window !== "undefined") {
                 const accessToken = GetCookie().value;
-                const newFetch = refetch();
-                if (accessToken && newFetch.isSuccess && newFetch.data.status === 200) {
-                    setLoginStatus(true);
-                } else {
-                    Router.push("/");
-                }
+                const newFetch = await refetch();
+                await setLoading(newFetch.isLoading);
+                if (accessToken && newFetch.isSuccess && newFetch.data.status === 200)
+                    await setLoginStatus(true);
             }
-        }, []);
-        if (isLoggedIn) {
-            return <Component {...pageProps} />;
-        } else {
-            return <LoginPage/>;
         }
+
+        useEffect(() => {
+            verify();
+        }, []);
+        if (isLoggedIn)
+            return <Component {...pageProps} />;
+        if (loading)
+            return <Loading/>
+        return <LoginPage/>
     };
 }
