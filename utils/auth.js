@@ -48,6 +48,7 @@ export function withAuth(Component) {
                 await setLoading(newFetch.isLoading);
                 if (accessToken && newFetch.isSuccess && newFetch.data.status === 200)
                     await setLoginStatus(true);
+                else await Router.push("/")
             }
         }
 
