@@ -42,13 +42,13 @@ export function withAuth(Component) {
         const [loading, setLoading] = useState(true);
 
         async function verify() {
+            console.log("here")
             if (typeof await window !== "undefined") {
-                const accessToken = GetCookie().value;
                 const newFetch = await refetch();
                 await setLoading(newFetch.isLoading);
-                if (accessToken && newFetch.isSuccess && newFetch.data.status === 200)
+                if (GetCookie().value && newFetch.isSuccess && newFetch.data.status === 200)
                     await setLoginStatus(true);
-                else await Router.push("/")
+                else await Router.push("/");
             }
         }
 
@@ -58,7 +58,7 @@ export function withAuth(Component) {
         if (isLoggedIn)
             return <Component {...pageProps} />;
         if (loading)
-            return <Loading/>
-        return <LoginPage/>
+            return <Loading/>;
+        return <LoginPage/>;
     };
 }
