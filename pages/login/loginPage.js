@@ -26,7 +26,7 @@ export default function LoginPage() {
         const newFetch = await refetch();
         if (newFetch.isSuccess && newFetch.data.status === 200) {
             Login(newFetch.data.data.token);
-            await router.push("/dashboard/home");
+            await router.push("/dashboard");
         } else setAlert(true)
     };
 
@@ -36,7 +36,7 @@ export default function LoginPage() {
 
     return (
         <>
-            <Alert show={alert} func={handleShow}/>
+            <Alert show={alert} func={handleShow} label="Email e/ou senha inválido(s)." color="red"/>
             <Head>
                 <title>Login Portal-Seas</title>
             </Head>

@@ -1,25 +1,27 @@
-import { useState, useEffect } from "react";
+import {useEffect, useState} from "react";
 
 export function Alert(props) {
-  const [show, setShow] = useState(false);
+    const [show, setShow] = useState(false);
 
-  useEffect(() => {
-    setShow(props.show);
-  }, [props.show]);
+    useEffect(() => {
+        setShow(props.show);
+    }, [props.show]);
 
-  return (
-    show && (
-      <div className="fixed md:bottom-0 md:right-0 md:m-8 w-screen md:w-full sm:max-w-sm z-50 mt-72 ">
-        <label className="close cursor-pointer flex items-center justify-center w-full p-2 bg-red-500 md:h-24 h-10 rounded shadow-lg text-white">
-          Email e/ou senha inválido(s).
-          <button
-            className="absolute top-0 right-2 focus:outline-none"
-            onClick={props.func}
-          >
-            X
-          </button>
-        </label>
-      </div>
-    )
-  );
+    let style = "close cursor-pointer flex items-center justify-center w-full p-2 md:h-24 h-18 rounded shadow-lg text-white " + "bg-" + props.color + "-500"
+
+    return (
+        show && (
+            <div className="flex justify-center items-center">
+            <div className="flex items-center justify-center fixed mt-40 md:w-full md:bottom-0 md:right-0 md:m-8 sm:max-w-sm z-40">
+                <label className={style}>
+                    {props.label}
+                    <button
+                        className="hidden"
+                        onClick={props.func}
+                    />
+                </label>
+            </div>
+            </div>
+        )
+    );
 }
