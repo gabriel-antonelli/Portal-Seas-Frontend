@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {useListUsersQuery} from "../providers/listUsersQuery";
 import {Loading} from "../components";
 import LoginPage from "../pages/login/loginPage";
+import Navbar from "../components/navbar";
 
 export function Login(token) {
     document.cookie = "token=Bearer " + token;
@@ -42,7 +43,6 @@ export function withAuth(Component) {
         const [loading, setLoading] = useState(true);
 
         async function verify() {
-            console.log("here")
             if (typeof await window !== "undefined") {
                 const newFetch = await refetch();
                 await setLoading(newFetch.isLoading);
@@ -56,7 +56,12 @@ export function withAuth(Component) {
             verify();
         }, []);
         if (isLoggedIn)
-            return <Component {...pageProps} />;
+            return (
+                <>
+                    <Navbar/>
+                    <Component {...pageProps} />
+                </>
+            )
         if (loading)
             return <Loading/>;
         return <LoginPage/>;
