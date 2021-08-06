@@ -1,6 +1,6 @@
 import Router from "next/router";
 import {useEffect, useState} from "react";
-import {useListUsersQuery} from "../providers/listUsersQuery";
+import {useListSexQuery} from "../providers/listSexQuery";
 import {Loading} from "../components";
 import LoginPage from "../pages/login/loginPage";
 import Navbar from "../components/navbar";
@@ -39,7 +39,7 @@ export function GetCookie() {
 export function withAuth(Component) {
     return (pageProps) => {
         const [isLoggedIn, setLoginStatus] = useState(false);
-        const {refetch} = useListUsersQuery();
+        const {refetch} = useListSexQuery();
         const [loading, setLoading] = useState(true);
 
         async function verify() {
