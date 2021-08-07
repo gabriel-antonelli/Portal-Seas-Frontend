@@ -10,13 +10,8 @@ export function Login(token) {
 }
 
 export function LogOut() {
-    const token = GetCookie();
-    if (token.exists) {
-        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-        Router.push("/");
-        return true;
-    }
-    return false;
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+    Router.push("/")
 }
 
 export function GetCookie() {
@@ -63,7 +58,7 @@ export function withAuth(Component) {
                 </>
             )
         if (loading)
-            return <Loading/>;
+            return <Loading show={true}/>;
         return <LoginPage/>;
     };
 }

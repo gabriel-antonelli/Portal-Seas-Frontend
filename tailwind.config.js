@@ -7,11 +7,14 @@ module.exports = {
         'seas-lg': "url('/assets/assistencia-social-lg.jpg')",
         'seas-sm': "url('/assets/assistencia-social-sm.jpg')",
       },
+      animation: {
+        bounce200: 'bounce 1s infinite 200ms',
+        bounce400: 'bounce 1s infinite 400ms',
+      },
     },
   },
   variants: {
     extend: {
-      backgroundColor: ['disabled']
     },
   },
   plugins: [require("@tailwindcss/forms")],
