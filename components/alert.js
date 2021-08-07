@@ -7,6 +7,11 @@ export function Alert(props) {
         setShow(props.show);
     }, [props.show]);
 
+    if(show)
+        setTimeout(() => {
+            props.func()
+        }, 6000)
+
     let style = "close cursor-pointer flex items-center justify-center w-full p-2 md:h-24 h-18 rounded shadow-lg text-white " + "bg-" + props.color + "-500"
 
     return (
