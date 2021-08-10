@@ -29,6 +29,8 @@ function Dashboard() {
         setAlert({show: !alert.show})
     }
 
+    console.log(values)
+
     return (
         <>
             <Alert show={alert.show} func={handleShow} label={alert.msg} color={alert.color}/>
@@ -176,7 +178,7 @@ function Dashboard() {
                                                 onChange={handleChange}
                                                 className="block py-2 px-3 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                             >
-                                                <option value="">Selecione</option>
+                                                <option>Selecione</option>
                                                 <option>Sim</option>
                                                 <option>Não</option>
                                             </select>
@@ -205,7 +207,7 @@ function Dashboard() {
                                                 onChange={handleChange}
                                                 className="block py-2 px-3 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                             >
-                                                <option value="">Selecione</option>
+                                                <option>Selecione</option>
                                                 <option>Sim</option>
                                                 <option>Não</option>
                                             </select>
