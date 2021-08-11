@@ -5,11 +5,13 @@ export function Alert(props) {
     const [color, setColor] = useState("#EF4444")
 
     useEffect(() => {
-        setShow(props.show);
         if (props.color === "blue")
             setColor("#3B82F6")
         if (props.color === "yellow")
             setColor("#FBBF24")
+        if (props.color === "red")
+            setColor("#EF4444")
+        setShow(props.show);
     }, [props.color, props.show]);
 
     if (props.show)
