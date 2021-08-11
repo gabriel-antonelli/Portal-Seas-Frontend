@@ -3,15 +3,20 @@ import Description from "../../components/description";
 import {useState} from "react";
 import {useListSexQuery} from "../../providers/listSexQuery";
 import {Alert} from "../../components";
+import {useListStatesQuery} from "../../providers/listStatesQuery";
+import {useListCitiesQuery} from "../../providers/listCitiesQuery";
 
 function Dashboard() {
 
     const [values, setValues] = useState({});
     const [alert, setAlert] = useState({show: false});
-    const {data} = useListSexQuery()
+    const {data: sexData, isSuccess: sexSuccess} = useListSexQuery();
+    const {data: statesData, isSuccess: statesSuccess} = useListStatesQuery();
+    // const {data: teste} = useListCitiesQuery(values.state)
 
     const handleChange = (e) => {
         const auxValues = {...values};
+        console.log(auxValues[e.target.key])
         auxValues[e.target.name] = e.target.value;
         setValues(auxValues);
     };
@@ -29,7 +34,6 @@ function Dashboard() {
         setAlert({show: !alert.show})
     }
 
-    console.log(values)
 
     return (
         <>
@@ -79,14 +83,15 @@ function Dashboard() {
                                                 name="sex"
                                                 className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                             >
-                                                <option value="">Selecione</option>
-                                                {data.data ? data.data.map(entry =>
+                                                <option className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione</option>
+                                                {sexSuccess ? sexData.data.map(entry =>
                                                         <option key={entry.id}>{entry.nomeclatura}</option>
                                                     ) :
                                                     <option>NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES</option>
                                                 }
                                             </select>
                                         </div>
+
                                         <div className="col-span-6 sm:col-span-3 lg:col-span-2">
                                             <label
                                                 className="block text-sm font-medium text-gray-700">
@@ -117,27 +122,40 @@ function Dashboard() {
 
                                         <div className="col-span-6 sm:col-span-6 lg:col-span-3">
                                             <label className="block text-sm font-medium text-gray-700">
-                                                Cidade
-                                            </label>
-                                            <input
-                                                type="text"
-                                                required
-                                                onChange={handleChange}
-                                                name="city"
-                                                className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                            />
-                                        </div>
-                                        <div className="col-span-6 sm:col-span-6 lg:col-span-3">
-                                            <label className="block text-sm font-medium text-gray-700">
                                                 Estado
                                             </label>
-                                            <input
-                                                type="text"
-                                                required
+                                            <select
                                                 onChange={handleChange}
+                                                required
                                                 name="state"
                                                 className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                            />
+                                            >
+                                                <option className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione</option>
+                                                {statesSuccess ? statesData.data.map(entry =>
+                                                        <option key={entry.id} value={entry.id}>{entry.nome}</option>
+                                                    ) :
+                                                    <option value="">NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES</option>
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <div className="col-span-6 sm:col-span-6 lg:col-span-3">
+                                            <label className="block text-sm font-medium text-gray-700">
+                                                Cidade
+                                            </label>
+                                            <select
+                                                onChange={handleChange}
+                                                required
+                                                name="city"
+                                                className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            >
+                                                <option className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione</option>
+                                                {statesSuccess ? statesData.data.map(entry =>
+                                                        <option key={entry.id}>{entry.nome}</option>
+                                                    ) :
+                                                    <option>NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES</option>
+                                                }
+                                            </select>
                                         </div>
 
                                         <div className="col-span-6 sm:col-span-6 lg:col-span-1">
