@@ -5,20 +5,30 @@ import {useListSexQuery} from "../../providers/listSexQuery";
 import {Alert} from "../../components";
 import {useListStatesQuery} from "../../providers/listStatesQuery";
 import {useListCitiesQuery} from "../../providers/listCitiesQuery";
+import {useListReasonsQuery} from "../../providers/listReasonsQuery";
+import {useListBenefitsQuery} from "../../providers/listBenefitsQuery";
+import {useListEspecialCasesQuery} from "../../providers/listEspecialCasesQuery";
 
 function Dashboard() {
 
     const [values, setValues] = useState({});
     const [alert, setAlert] = useState({show: false});
+    const [state, setState] = useState();
+
     const {data: sexData, isSuccess: sexSuccess} = useListSexQuery();
-    const {data: statesData, isSuccess: statesSuccess} = useListStatesQuery();
-    // const {data: teste} = useListCitiesQuery(values.state)
+    const {data: reasonsData} = useListReasonsQuery();
+    const {data: benefitsData} = useListBenefitsQuery();
+    const {data: especialCasesData} = useListEspecialCasesQuery()
+    const {data: statesData} = useListStatesQuery();
+    const {data: citiesData, refetch} = useListCitiesQuery(state);
+
 
     const handleChange = (e) => {
         const auxValues = {...values};
-        console.log(auxValues[e.target.key])
         auxValues[e.target.name] = e.target.value;
         setValues(auxValues);
+        if (e.target.name === "state")
+            getCities(e.target.value)
     };
 
     const handleSubmit = async (e) => {
@@ -34,7 +44,14 @@ function Dashboard() {
         setAlert({show: !alert.show})
     }
 
-
+    const getCities = async (id) => {
+        await setState(id)
+        if (![null, undefined, "Selecione", "NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES"].includes(id))
+            await refetch()
+    }
+    
+    console.log(citiesData ? citiesData.status : citiesData)
+    
     return (
         <>
             <Alert show={alert.show} func={handleShow} label={alert.msg} color={alert.color}/>
@@ -83,8 +100,10 @@ function Dashboard() {
                                                 name="sex"
                                                 className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                             >
-                                                <option className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione</option>
-                                                {sexSuccess ? sexData.data.map(entry =>
+                                                <option
+                                                    className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione
+                                                </option>
+                                                {sexData && sexData.status === 200 ? sexData.data.map(entry =>
                                                         <option key={entry.id}>{entry.nomeclatura}</option>
                                                     ) :
                                                     <option>NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES</option>
@@ -130,8 +149,10 @@ function Dashboard() {
                                                 name="state"
                                                 className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                             >
-                                                <option className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione</option>
-                                                {statesSuccess ? statesData.data.map(entry =>
+                                                <option
+                                                    className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione
+                                                </option>
+                                                {statesData && statesData.status === 200 ? statesData.data.map(entry =>
                                                         <option key={entry.id} value={entry.id}>{entry.nome}</option>
                                                     ) :
                                                     <option value="">NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES</option>
@@ -146,11 +167,14 @@ function Dashboard() {
                                             <select
                                                 onChange={handleChange}
                                                 required
+                                                disabled={[undefined, "NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES", "Selecione"].includes(state)}
                                                 name="city"
-                                                className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300"
                                             >
-                                                <option className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione</option>
-                                                {statesSuccess ? statesData.data.map(entry =>
+                                                <option
+                                                    className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione
+                                                </option>
+                                                {citiesData && citiesData.status === 200 ? citiesData.data.map(entry =>
                                                         <option key={entry.id}>{entry.nome}</option>
                                                     ) :
                                                     <option>NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES</option>
@@ -177,13 +201,21 @@ function Dashboard() {
                                             <label className="block text-sm font-medium text-gray-700">
                                                 Motivos para estar na rua:
                                             </label>
-                                            <input
-                                                type="text"
+                                            <select
+                                                name="reasons"
                                                 required
                                                 onChange={handleChange}
-                                                name="reasons"
-                                                className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                            />
+                                                className="block py-2 px-3 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            >
+                                                <option
+                                                    className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione
+                                                </option>
+                                                {reasonsData && reasonsData.status === 200 ? reasonsData.data.map(entry =>
+                                                        <option key={entry.id}>{entry.nomeclatura}</option>
+                                                    ) :
+                                                    <option>NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES</option>
+                                                }
+                                            </select>
                                         </div>
 
                                         <div className="col-span-6 sm:col-span-6 lg:col-span-1">
@@ -205,14 +237,22 @@ function Dashboard() {
                                             <label className="block text-sm font-medium text-gray-700">
                                                 Se sim, quais benefícios?
                                             </label>
-                                            <input
-                                                disabled={["Não", "Selecione", undefined].includes(values.hasBenefits)}
-                                                required
-                                                type="text"
-                                                onChange={handleChange}
+                                            <select
                                                 name="benefits"
-                                                className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300"
-                                            />
+                                                required
+                                                disabled={["Não", "Selecione", undefined].includes(values.hasBenefits)}
+                                                onChange={handleChange}
+                                                className="block py-2 px-3 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300"
+                                            >
+                                                <option
+                                                    className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione
+                                                </option>
+                                                {benefitsData && benefitsData.status === 200 ? benefitsData.data.map(entry =>
+                                                        <option key={entry.id}>{entry.nomeclatura}</option>
+                                                    ) :
+                                                    <option>NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES</option>
+                                                }
+                                            </select>
                                         </div>
 
                                         <div className="col-span-6 sm:col-span-6 lg:col-span-1">
@@ -234,14 +274,22 @@ function Dashboard() {
                                             <label className="block text-sm font-medium text-gray-700">
                                                 Se sim, qual caso?
                                             </label>
-                                            <input
-                                                disabled={["Não", "Selecione", undefined].includes(values.isEspecialCase)}
-                                                type="text"
+                                            <select
+                                                name="especialCase"
                                                 required
+                                                disabled={["Não", "Selecione", undefined].includes(values.isEspecialCase)}
                                                 onChange={handleChange}
-                                                name="cases"
-                                                className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300"
-                                            />
+                                                className="block py-2 px-3 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300"
+                                            >
+                                                <option
+                                                    className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione
+                                                </option>
+                                                {especialCasesData && especialCasesData.status === 200 ? especialCasesData.data.map(entry =>
+                                                        <option key={entry.id}>{entry.nomeclatura}</option>
+                                                    ) :
+                                                    <option>NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES</option>
+                                                }
+                                            </select>
                                         </div>
 
                                     </div>
