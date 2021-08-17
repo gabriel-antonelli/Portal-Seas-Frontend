@@ -8,6 +8,7 @@ import {useListCitiesQuery} from "../../providers/listCitiesQuery";
 import {useListReasonsQuery} from "../../providers/listReasonsQuery";
 import {useListBenefitsQuery} from "../../providers/listBenefitsQuery";
 import {useListEspecialCasesQuery} from "../../providers/listEspecialCasesQuery";
+import {useListColorsQuery} from "../../providers/listColorsQuery";
 
 function Dashboard() {
 
@@ -15,7 +16,8 @@ function Dashboard() {
     const [alert, setAlert] = useState({show: false});
     const [state, setState] = useState();
 
-    const {data: sexData, isSuccess: sexSuccess} = useListSexQuery();
+    const {data: sexData} = useListSexQuery();
+    const {data: colorsData} = useListColorsQuery();
     const {data: reasonsData} = useListReasonsQuery();
     const {data: benefitsData} = useListBenefitsQuery();
     const {data: especialCasesData} = useListEspecialCasesQuery()
@@ -49,8 +51,6 @@ function Dashboard() {
         if (![null, undefined, "Selecione", "NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES"].includes(id))
             await refetch()
     }
-    
-    console.log(citiesData ? citiesData.status : citiesData)
     
     return (
         <>
@@ -116,13 +116,21 @@ function Dashboard() {
                                                 className="block text-sm font-medium text-gray-700">
                                                 Cor
                                             </label>
-                                            <input
-                                                type="text"
-                                                required
+                                            <select
                                                 onChange={handleChange}
+                                                required
                                                 name="cor"
                                                 className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                            />
+                                            >
+                                                <option
+                                                    className="block mt-1 w-full rounded-md border-gray-300 shadow-sm">Selecione
+                                                </option>
+                                                {colorsData && colorsData.status === 200 ? colorsData.data.map(entry =>
+                                                        <option key={entry.id} value={entry.id}>{entry.nomeclatura}</option>
+                                                    ) :
+                                                    <option value="">NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES</option>
+                                                }
+                                            </select>
                                         </div>
                                         <div className="col-span-6 sm:col-span-3 lg:col-span-2">
                                             <label
