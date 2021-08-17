@@ -8,5 +8,7 @@ export function useListCitiesQuery(id) {
             type: "get"
         });
     };
-    return useQuery("listStates", listCities);
+    return useQuery("listCities", listCities, {
+        enabled: false,
+    });
 }
