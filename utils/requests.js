@@ -26,6 +26,8 @@ export async function Requests(options) {
             url: url
         });
     } catch (err) {
+        if (err.response)
+            return await err.response;
         return await err;
     }
 }

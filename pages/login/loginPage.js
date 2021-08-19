@@ -4,14 +4,15 @@ import {useRouter} from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 import {Login} from "../../utils";
-import {Alert} from "../../components"
+import {Alert, Loading} from "../../components"
 import {useLogin} from "../../providers/loginQuery";
 
 export default function LoginPage() {
     const [state, setState] = useState({password: "", email: ""});
     const [alert, setAlert] = useState(false);
-    const router = useRouter();
+    const [loading, setLoading] = useState(false);
     const {refetch} = useLogin(state.password, state.email);
+    const router = useRouter();
 
     const handleChange = (event) => {
         const {name, value} = event.target;
@@ -23,11 +24,13 @@ export default function LoginPage() {
 
     const handleSubmit = async (e) => {
         await e.preventDefault();
+        setLoading(true)
         const newFetch = await refetch();
         if (newFetch.isSuccess && newFetch.data.status === 200) {
             Login(newFetch.data.data.token);
             await router.push("/dashboard");
         } else setAlert(true)
+        setLoading(false)
     };
 
     const handleShow = () => {
@@ -36,6 +39,7 @@ export default function LoginPage() {
 
     return (
         <>
+            <Loading show={loading}/>
             <Alert show={alert} func={handleShow} label="Email e/ou senha inválido(s)." color="red"/>
             <Head>
                 <title>Login Portal-Seas</title>
