@@ -1,9 +1,9 @@
-import {Requests} from "../utils";
+import {Requests} from "../../utils";
 import {useQuery} from "react-query";
 
 export function useListColorsQuery() {
     const listColors = async () => {
-        return await Requests({
+        return Requests({
             url: "cor",
             type: "get"
         });

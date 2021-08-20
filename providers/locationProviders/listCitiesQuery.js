@@ -1,9 +1,9 @@
-import {Requests} from "../utils";
+import {Requests} from "../../utils";
 import {useQuery} from "react-query";
 
 export function useListCitiesQuery(id) {
     const listCities = async () => {
-        return await Requests({
+        return Requests({
             url: "cidade/" + id,
             type: "get"
         });

@@ -1,9 +1,9 @@
-import {Requests} from "../utils";
+import {Requests} from "../../utils";
 import {useQuery} from "react-query";
 
 export function useListBenefitsQuery() {
     const listBenefits = async () => {
-        return await Requests({
+        return Requests({
             url: "beneficio",
             type: "get"
         });
