@@ -1,5 +1,5 @@
 import {withAuth} from "../../utils";
-import Description from "../../components/description";
+import {Description} from "../../components";
 
 function Registries(){
     return(

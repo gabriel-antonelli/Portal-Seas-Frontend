@@ -1,4 +1,4 @@
-export default function Description(props){
+export function Description(props){
     return(
         <div className="justify-center items-center">
         <div className="md:col-span-2">
