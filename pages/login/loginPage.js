@@ -1,11 +1,18 @@
+//Libs
 import {useState} from "react";
 import Head from "next/head";
 import {useRouter} from "next/router";
 import Image from "next/image";
 import Link from "next/link";
+
+//Aux
 import {Login} from "../../utils";
+
+//Components
 import {Alert, Loading} from "../../components"
-import {useLogin} from "../../providers/loginQuery";
+
+//Providers
+import {useLogin} from "../../providers";
 
 export default function LoginPage() {
     const [state, setState] = useState({password: "", email: ""});
