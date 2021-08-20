@@ -27,7 +27,7 @@ export async function Requests(options) {
         });
     } catch (err) {
         if (err.response)
-            return await err.response;
-        return await err;
+            return err.response;
+        return err;
     }
 }

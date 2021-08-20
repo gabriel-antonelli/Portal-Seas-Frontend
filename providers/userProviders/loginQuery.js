@@ -1,9 +1,9 @@
 import {useQuery} from "react-query";
-import {Requests} from "../utils";
+import {Requests} from "../../utils";
 
 export function useLogin(email, password) {
   const loginUser = async () => {
-    return await Requests({
+    return Requests({
       url: "auth",
       body: {senha: password, usuario: email},
       type: "post",

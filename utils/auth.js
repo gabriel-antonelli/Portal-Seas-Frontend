@@ -1,9 +1,13 @@
-import Router from "next/router";
+//Libs
 import {useEffect, useState} from "react";
-import {useListSexQuery} from "../providers/listSexQuery";
-import {Loading} from "../components";
+import Router from "next/router";
+
+//Providers
+import {useListSexQuery} from "../providers";
+
+//Components
+import {Loading, NavBar} from "../components";
 import LoginPage from "../pages/login/loginPage";
-import Navbar from "../components/navbar";
 
 export function Login(token) {
     document.cookie = "token=Bearer " + token;
@@ -15,20 +19,22 @@ export function LogOut() {
 }
 
 export function GetCookie() {
-    const all = document.cookie;
-    if (all) {
-        const exists = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="));
-        if (exists) {
-            const value = document.cookie
+    if (typeof window !== "undefined") {
+        const all = document.cookie;
+        if (all) {
+            const exists = document.cookie
                 .split("; ")
-                .find((row) => row.startsWith("token="))
-                .split("=")[1];
-            return {all, exists, value};
+                .find((row) => row.startsWith("token="));
+            if (exists) {
+                const value = document.cookie
+                    .split("; ")
+                    .find((row) => row.startsWith("token="))
+                    .split("=")[1];
+                return {all, exists, value};
+            }
         }
     }
-    return false;
+    return {};
 }
 
 export function withAuth(Component) {
@@ -38,12 +44,11 @@ export function withAuth(Component) {
         const [loading, setLoading] = useState(true);
 
         async function verify() {
-            if (typeof await window !== "undefined") {
+            if (typeof window !== "undefined") {
                 const newFetch = await refetch();
                 await setLoading(newFetch.isLoading);
                 if (GetCookie().value && newFetch.isSuccess && newFetch.data.status === 200)
                     await setLoginStatus(true);
-                else await Router.push("/");
             }
         }
 
@@ -53,7 +58,7 @@ export function withAuth(Component) {
         if (isLoggedIn)
             return (
                 <>
-                    <Navbar/>
+                    <NavBar/>
                     <Component {...pageProps} />
                 </>
             )

@@ -6,7 +6,7 @@ import {MenuIcon, XIcon} from '@heroicons/react/outline';
 import {LogOut} from "../utils";
 
 const navigation = [
-    {name: 'Cadastro de Cidadão', href: '/dashboard'},
+    {name: 'Cadastro de Cidadão', href: '/dashboard', index: true},
     {name: 'Registros', href: '/dashboard/registries'},
     {name: 'Mapa', href: '#3'},
     {name: 'Calendário', href: '#4'},
@@ -16,7 +16,7 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Navbar() {
+export function NavBar() {
     return (
         <Disclosure as="nav" className="bg-gray-800">
             {({open}) => (
