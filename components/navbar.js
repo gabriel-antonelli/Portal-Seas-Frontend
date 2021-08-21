@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {Disclosure, Menu, Transition} from '@headlessui/react';
 import {MenuIcon, XIcon} from '@heroicons/react/outline';
+
 import {LogOut} from "../utils";
 
 const navigation = [
