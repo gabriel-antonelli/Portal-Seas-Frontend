@@ -9,7 +9,7 @@ import {useListSexQuery} from "../providers";
 import {Loading, NavBar} from "../components";
 import LoginPage from "../pages/login/loginPage";
 
-export function Login(token) {
+export function SetToken(token) {
     document.cookie = "token=Bearer " + token;
 }
 
@@ -18,19 +18,20 @@ export function LogOut() {
     Router.push("/")
 }
 
+
 export function GetCookie() {
     if (typeof window !== "undefined") {
-        const all = document.cookie;
-        if (all) {
-            const exists = document.cookie
+        const allCookies = document.cookie;
+        if (allCookies) {
+            const existsToken = document.cookie
                 .split("; ")
                 .find((row) => row.startsWith("token="));
-            if (exists) {
-                const value = document.cookie
+            if (existsToken) {
+                const tokenValue = document.cookie
                     .split("; ")
                     .find((row) => row.startsWith("token="))
                     .split("=")[1];
-                return {all, exists, value};
+                return {allCookies, existsToken, tokenValue};
             }
         }
     }
@@ -47,14 +48,18 @@ export function withAuth(Component) {
             if (typeof window !== "undefined") {
                 const newFetch = await refetch();
                 await setLoading(newFetch.isLoading);
-                if (GetCookie().value && newFetch.isSuccess && newFetch.data.status === 200)
+                if (GetCookie().tokenValue && newFetch.isSuccess && newFetch.data.status === 200) {
                     await setLoginStatus(true);
+                } else {
+                    await Router.push("/")
+                }
             }
         }
 
         useEffect(() => {
             verify();
         }, []);
+
         if (isLoggedIn)
             return (
                 <>
@@ -62,8 +67,10 @@ export function withAuth(Component) {
                     <Component {...pageProps} />
                 </>
             )
+
         if (loading)
             return <Loading show={true}/>;
+
         return <LoginPage/>;
     };
 }

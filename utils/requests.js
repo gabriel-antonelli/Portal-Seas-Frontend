@@ -5,7 +5,7 @@ export async function Requests(options) {
     try {
         const url = process.env.NEXT_PUBLIC_API_URL + options.url;
         const token = GetCookie();
-        if (token.value) axios.defaults.headers.common["Authorization"] = token.value;
+        if (token.tokenValue) axios.defaults.headers.common["Authorization"] = token.tokenValue;
 
         if (options.body) {
             return await axios({
