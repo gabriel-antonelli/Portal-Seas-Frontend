@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 //Aux
-import {Login} from "../../utils";
+import {SetToken} from "../../utils";
 
 //Components
 import {Alert, Loading} from "../../components"
@@ -34,7 +34,7 @@ export default function LoginPage() {
         setLoading(true)
         const newFetch = await refetch();
         if (newFetch.isSuccess && newFetch.data.status === 200) {
-            Login(newFetch.data.data.token);
+            SetToken(newFetch.data.data.token);
             await router.push("/dashboard");
         } else setAlert(true)
         setLoading(false)
