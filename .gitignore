@@ -19,7 +19,6 @@
 .DS_Store
 *.pem
 .idea
-.husky
 
 # debug
 npm-debug.log*
