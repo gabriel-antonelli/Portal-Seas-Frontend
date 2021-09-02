@@ -1,33 +1,38 @@
-import axios from "axios";
-import {GetCookie} from "./auth";
+import { GetCookie } from './auth';
 
 export async function Requests(options) {
-    try {
-        const url = process.env.NEXT_PUBLIC_API_URL + options.url;
-        const token = GetCookie();
-        if (token.tokenValue) axios.defaults.headers.common["Authorization"] = token.tokenValue;
-
-        if (options.body) {
-            return await axios({
-                method: options.type,
-                url: url,
-                data: options.body
-            });
-        }
-        if (options.params) {
-            return await axios({
-                method: options.type,
-                url: url,
-                params: options.params
-            });
-        }
-        return await axios({
-            method: options.type,
-            url: url
-        });
-    } catch (err) {
-        if (err.response)
-            return err.response;
-        return err;
-    }
+	try {
+		const url = new URL(process.env.NEXT_PUBLIC_API_URL + options.url);
+		const token = GetCookie(process.env.NEXT_PUBLIC_TOKEN);
+		let init = {
+			method: options.type,
+			mode: 'cors',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
+		if (token.tokenValue) {
+			init = {
+				...init,
+				headers: {
+					Authorization: token.tokenValue,
+					...init.headers,
+				},
+			};
+		}
+		if (options.body) {
+			init = {
+				...init,
+				body: JSON.stringify(options.body),
+			};
+		}
+		if (options.params) {
+			url.search = new URLSearchParams(options.params).toString();
+		}
+		let res = await fetch(url.toString(), init);
+		return { data: await res.json(), success: res.ok, status: res.status };
+	} catch (err) {
+		if (err.response) return err.response;
+		return err;
+	}
 }
