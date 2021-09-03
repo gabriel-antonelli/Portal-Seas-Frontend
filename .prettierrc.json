@@ -3,5 +3,7 @@
 	"trailingComma": "es5",
 	"useTabs": true,
 	"bracketSpacing": true,
-	"endOfLine": "lf"
+	"endOfLine": "lf",
+	"jsxSingleQuote": true,
+	"jsxBracketSameLine": true
 }

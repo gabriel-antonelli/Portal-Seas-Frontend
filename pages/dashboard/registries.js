@@ -5,8 +5,8 @@ function Registries() {
 	return (
 		<>
 			<Description
-				title="Cadastro de cidadão"
-				desc="Preencha as informações necessárias para cadastrar um cidadão."
+				title='Cadastro de cidadão'
+				desc='Preencha as informações necessárias para cadastrar um cidadão.'
 			/>
 		</>
 	);

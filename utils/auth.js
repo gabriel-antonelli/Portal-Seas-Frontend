@@ -10,13 +10,11 @@ import { Loading, NavBar } from '../components';
 import LoginPage from '../pages/login/loginPage';
 
 export function SetToken(tokenValue) {
-	document.cookie =
-		process.env.NEXT_PUBLIC_TOKEN + '=Bearer ' + tokenValue + ';Secure';
+	document.cookie = `${process.env.NEXT_PUBLIC_TOKEN}=Bearer ${tokenValue};Secure`;
 }
 
 export function LogOut() {
-	document.cookie =
-		process.env.NEXT_PUBLIC_TOKEN + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC';
+	document.cookie = `${process.env.NEXT_PUBLIC_TOKEN}=; expires=Thu, 01 Jan 1970 00:00:00 UTC`;
 	Router.push('/');
 }
 
@@ -66,15 +64,18 @@ export function withAuth(Component) {
 			verify();
 		}, []);
 
-		if (isLoggedIn)
+		if (isLoggedIn) {
 			return (
 				<>
 					<NavBar />
 					<Component {...pageProps} />
 				</>
 			);
+		}
 
-		if (loading) return <Loading show={true} />;
+		if (loading) {
+			return <Loading show={true} />;
+		}
 
 		return <LoginPage />;
 	};

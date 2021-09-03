@@ -29,10 +29,12 @@ export async function Requests(options) {
 		if (options.params) {
 			url.search = new URLSearchParams(options.params).toString();
 		}
-		let res = await fetch(url.toString(), init);
+		const res = await fetch(url.toString(), init);
 		return { data: await res.json(), success: res.ok, status: res.status };
 	} catch (err) {
-		if (err.response) return err.response;
+		if (err.response) {
+			return err.response;
+		}
 		return err;
 	}
 }
