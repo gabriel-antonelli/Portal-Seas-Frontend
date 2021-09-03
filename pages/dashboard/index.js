@@ -15,10 +15,11 @@ import {
 } from '../../providers';
 
 //Aux
-import { withAuth } from '../../utils';
+import { shouldShowAnyValue, verifyValue, withAuth } from '../../utils';
 
 //Components
 import { Alert, Description } from '../../components';
+import { Input, SelectComponent } from '../../components/form';
 import Head from 'next/head';
 import { useCreateCitizenQuery } from '../../providers/citizenProviders/createCitizenQuery';
 
@@ -38,6 +39,7 @@ function Dashboard() {
 	const { refetch: createRefetch } = useCreateCitizenQuery(values);
 
 	const handleChange = (e, name) => {
+		console.log(name, e);
 		const auxValues = { ...values };
 		if (name) {
 			e.map((val) => {
@@ -78,7 +80,7 @@ function Dashboard() {
 
 	const getCities = async (id) => {
 		await setState(id);
-		if (!verifyValues(id)) {
+		if (!verifyValue(id)) {
 			await refetch();
 		}
 	};
@@ -94,21 +96,10 @@ function Dashboard() {
 		return null;
 	};
 
-	const verifyValues = (value) => {
-		return [
-			null,
-			undefined,
-			'Selecione',
-			'Não',
-			'NÃO FOI POSSÍVEL CARREGAR AS OPÇÕES',
-			'',
-		].includes(value);
-	};
-
 	const shouldShowMultiValues = (value, name) => {
-		if (!verifyValues(value)) {
+		if (!verifyValue(value)) {
 			return undefined;
-		} else if (!verifyValues(values[name])) {
+		} else if (!verifyValue(values[name])) {
 			const auxValues = { ...values };
 			auxValues[name] = null;
 			setValues(auxValues);
@@ -116,23 +107,18 @@ function Dashboard() {
 		return null;
 	};
 
-	const shouldShowValue = (needed, value) => {
-		if (!verifyValues(needed)) {
-			return value;
-		}
-		return null;
-	};
-
 	const returnOptionsMulti = (data) => {
-		let options = [];
+		const options = [];
 		if (data && data.status === 200) {
 			data.data.map((entry) =>
 				options.push({ value: entry.id, label: entry.nomeclatura })
 			);
 			return options;
 		}
-		return [];
+		return [{ value: 'Sem opções', label: 'Sem Opções' }];
 	};
+
+	console.log(values);
 
 	return (
 		<>
@@ -145,220 +131,188 @@ function Dashboard() {
 			<Head>
 				<title>Cadastro de Cidadão</title>
 			</Head>
-			<div className="justify-center items-center mt-10">
-				<div className="md:grid md:grid-cols-4 md:gap-6">
+			<div className='justify-center items-center mt-10'>
+				<div className='md:grid md:grid-cols-4 md:gap-6'>
 					<Description
-						title="Cadastro de cidadão"
-						desc="Preencha as informações necessárias para cadastrar um cidadão."
+						title='Cadastro de cidadão'
+						desc='Preencha as informações necessárias para cadastrar um cidadão.'
 					/>
-					<div className="md:col-span-3">
+					<div className='md:col-span-3'>
 						<form onSubmit={handleSubmit}>
-							<div className="overflow-hidden mt-4 shadow sm:rounded-md md:mt-0 md:mr-8">
-								<div className="px-4 py-5 bg-white sm:p-6">
-									<div className="grid grid-cols-6 gap-6">
-										<div className="col-span-6 sm:col-span-3">
-											<label className="block text-sm font-medium text-gray-700">
-												Nome
-											</label>
-											<input
-												name="name"
-												type="text"
-												onChange={handleChange}
-												required
-												className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-											/>
-										</div>
+							<div className='overflow-hidden mt-4 shadow sm:rounded-md md:mt-0 md:mr-8'>
+								<div className='px-4 py-5 bg-white sm:p-6'>
+									<div className='grid grid-cols-6 gap-6'>
+										<Input
+											name='name'
+											label='Nome'
+											type='text'
+											handleChange={handleChange}
+											required={true}
+											sm='col-span-3'
+										/>
+										<Input
+											name='lastName'
+											label='Sobrenome'
+											type='text'
+											required={true}
+											handleChange={handleChange}
+											sm='col-span-3'
+										/>
+										<SelectComponent
+											label='Sexo'
+											size='col-span-2'
+											handleChange={(e) => handleChange(e, 'sex')}
+											name='sex'
+											options={sexData}
+										/>
 
-										<div className="col-span-6 sm:col-span-3">
-											<label className="block text-sm font-medium text-gray-700">
-												Sobrenome
-											</label>
-											<input
-												name="lastName"
-												type="text"
-												onChange={handleChange}
-												required
-												className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-											/>
-										</div>
-
-										<div className="col-span-6 sm:col-span-6 lg:col-span-2">
-											<label className="block text-sm font-medium text-gray-700">
-												Sexo
-											</label>
-											<select
-												name="sex"
-												onChange={handleChange}
-												required
-												className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-											>
-												<option
-													value=""
-													className="block mt-1 w-full rounded-md border-gray-300 shadow-sm"
-												>
-													Selecione
-												</option>
-												{returnOptions(sexData)}
-											</select>
-										</div>
-
-										<div className="col-span-6 sm:col-span-3 lg:col-span-2">
-											<label className="block text-sm font-medium text-gray-700">
+										<div className='col-span-6 sm:col-span-2'>
+											<label className='block text-sm font-medium text-gray-700'>
 												Cor
 											</label>
 											<select
-												name="color"
+												name='color'
 												onChange={handleChange}
 												required
-												className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-											>
+												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
 												<option
-													value=""
-													className="block mt-1 w-full rounded-md border-gray-300 shadow-sm"
-												>
+													value=''
+													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
 													Selecione
 												</option>
 												{returnOptions(colorsData)}
 											</select>
 										</div>
-										<div className="col-span-6 sm:col-span-3 lg:col-span-2">
-											<label className="block text-sm font-medium text-gray-700">
+										<div className='col-span-6 sm:col-span-2'>
+											<label className='block text-sm font-medium text-gray-700'>
 												Data de nascimento
 											</label>
 											<input
-												name="birthday"
-												type="date"
+												name='birthday'
+												type='date'
 												onChange={handleChange}
 												required
-												className="block mt-1 w-full rounded-md border-gray-300 shadow-sm cursor-pointer focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm cursor-pointer focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
 											/>
 										</div>
 
-										<div className="col-span-6 sm:col-span-6 lg:col-span-3">
-											<label className="block text-sm font-medium text-gray-700">
+										<div className='col-span-6 lg:col-span-3'>
+											<label className='block text-sm font-medium text-gray-700'>
 												Estado
 											</label>
 											<select
-												name="state"
+												name='state'
 												onChange={handleChange}
 												required
-												className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-											>
+												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
 												<option
-													value=""
-													className="block mt-1 w-full rounded-md border-gray-300 shadow-sm"
-												>
+													value=''
+													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
 													Selecione
 												</option>
 												{returnOptions(statesData, true)}
 											</select>
 										</div>
 
-										<div className="col-span-6 sm:col-span-6 lg:col-span-3">
-											<label className="block text-sm font-medium text-gray-700">
+										<div className='col-span-6  lg:col-span-3'>
+											<label className='block text-sm font-medium text-gray-700'>
 												Cidade
 											</label>
 											<select
-												name="city"
-												value={shouldShowValue(values.state, values.city)}
+												name='city'
+												value={shouldShowAnyValue(values.state, values.city)}
 												onChange={handleChange}
-												disabled={verifyValues(state)}
+												disabled={verifyValue(state)}
 												required
-												className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300"
-											>
+												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300'>
 												<option
-													value=""
-													className="block mt-1 w-full rounded-md border-gray-300 shadow-sm"
-												>
+													value=''
+													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
 													Selecione
 												</option>
 												{returnOptions(citiesData, true)}
 											</select>
 										</div>
 
-										<div className="col-span-6 sm:col-span-6 lg:col-span-3">
-											<label className="block text-sm font-medium text-gray-700">
+										<div className='col-span-6  lg:col-span-3'>
+											<label className='block text-sm font-medium text-gray-700'>
 												Fonte de Renda
 											</label>
 											<select
-												name="incomingSource"
+												name='incomingSource'
 												onChange={handleChange}
 												required
-												className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300"
-											>
+												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300'>
 												<option
-													value=""
-													className="block mt-1 w-full rounded-md border-gray-300 shadow-sm"
-												>
+													value=''
+													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
 													Selecione
 												</option>
 												{returnOptions(incomingSourcesData)}
 											</select>
 										</div>
 
-										<div className="col-span-6 sm:col-span-6 lg:col-span-3">
-											<label className="block text-sm font-medium text-gray-700">
+										<div className='col-span-6  lg:col-span-3'>
+											<label className='block text-sm font-medium text-gray-700'>
 												O que precisa para sair das ruas?
 											</label>
 											<input
-												name="getOutReasons"
-												type="text"
+												name='getOutReasons'
+												type='text'
 												onChange={handleChange}
 												required
-												className="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
 											/>
 										</div>
 
-										<div className="col-span-6 sm:col-span-6 lg:col-span-1">
-											<label className="block text-sm font-medium text-gray-700">
+										<div className='col-span-6  lg:col-span-1'>
+											<label className='block text-sm font-medium text-gray-700'>
 												Quer sair das ruas?
 											</label>
 											<select
-												name="getOut"
+												name='getOut'
 												onChange={handleChange}
 												required
-												className="block px-3 py-2 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-											>
-												<option value="">Selecione</option>
+												className='block px-3 py-2 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
+												<option value=''>Selecione</option>
 												<option value={true}>Sim</option>
 												<option value={false}>Não</option>
 											</select>
 										</div>
 
-										<div className="col-span-6 sm:col-span-6 lg:col-span-5">
-											<label className="block text-sm font-medium text-gray-700">
+										<div className='col-span-6 lg:col-span-5'>
+											<label className='block text-sm font-medium text-gray-700'>
 												Motivos para estar na rua:
 											</label>
 											<Select
 												onChange={(e) => handleChange(e, 'reasons')}
 												options={returnOptionsMulti(reasonsData)}
 												placeholder={
-													<div className="text-black">Selecione</div>
+													<div className='text-black'>Selecione</div>
 												}
 												isSearchable={false}
 												isMulti
-												className="block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm"
+												className='block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm'
 											/>
 										</div>
 
-										<div className="col-span-6 sm:col-span-6 lg:col-span-1">
-											<label className="block text-sm font-medium text-gray-700">
+										<div className='col-span-6 lg:col-span-1'>
+											<label className='block text-sm font-medium text-gray-700'>
 												Caso especial?
 											</label>
 											<select
-												name="isEspecialCase"
+												name='isEspecialCase'
 												onChange={handleChange}
 												required
-												className="block px-3 py-2 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-											>
-												<option value="">Selecione</option>
+												className='block px-3 py-2 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
+												<option value=''>Selecione</option>
 												<option>Sim</option>
 												<option>Não</option>
 											</select>
 										</div>
 
-										<div className="col-span-6 sm:col-span-6 lg:col-span-5">
-											<label className="block text-sm font-medium text-gray-700">
+										<div className='col-span-6  lg:col-span-5'>
+											<label className='block text-sm font-medium text-gray-700'>
 												Se sim, quais casos?
 											</label>
 											<Select
@@ -368,36 +322,36 @@ function Dashboard() {
 													values.isEspecialCase,
 													'especialCases'
 												)}
-												isDisabled={verifyValues(values.isEspecialCase)}
+												isDisabled={verifyValue(values.isEspecialCase)}
 												placeholder={
-													<div className="text-black">Selecione</div>
+													<div className='text-black'>Selecione</div>
 												}
 												isSearchable={false}
 												maxMenuHeight={80}
 												isMulti
-												className="block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm"
+												className='block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm'
 											/>
 										</div>
 
-										<div className="col-span-6 sm:col-span-6 lg:col-span-1">
-											<label className="block text-sm font-medium text-gray-700">
+										<div className='col-span-6  lg:col-span-1'>
+											<label className='block text-sm font-medium text-gray-700'>
 												Recebe benefício?
 											</label>
 											<select
-												name="hasBenefits"
+												name='hasBenefits'
 												onChange={handleChange}
 												required
-												className="block px-3 py-2 mt-1 w-full placeholder-gray-500 bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-											>
-												<option value="" className="bg-fuchsia-500">
+												className='block px-3 py-2 mt-1 w-full placeholder-gray-500 bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
+												<option value='' className='bg-fuchsia-500'>
 													Selecione
 												</option>
 												<option>Sim</option>
 												<option>Não</option>
 											</select>
 										</div>
-										<div className="col-span-6 sm:col-span-6 lg:col-span-5">
-											<label className="block text-sm font-medium text-gray-700">
+
+										<div className='col-span-6  lg:col-span-5'>
+											<label className='block text-sm font-medium text-gray-700'>
 												Se sim, quais benefícios?
 											</label>
 											<Select
@@ -407,20 +361,21 @@ function Dashboard() {
 													values.hasBenefits,
 													'benefits'
 												)}
-												isDisabled={verifyValues(values.hasBenefits)}
+												isDisabled={verifyValue(values.hasBenefits)}
 												placeholder={
-													<div className="text-black">Selecione</div>
+													<div className='text-black'>Selecione</div>
 												}
 												isSearchable={false}
 												isMulti
 												maxMenuHeight={80}
-												className="block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm"
+												className='block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm'
 											/>
 										</div>
 									</div>
 								</div>
-								<div className="px-4 py-3 text-right bg-gray-50 sm:px-6">
-									<button className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-md border border-transparent shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+
+								<div className='px-4 py-3 text-right bg-gray-50 sm:px-6'>
+									<button className='inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-md border border-transparent shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
 										Cadastrar
 									</button>
 								</div>
