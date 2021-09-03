@@ -39,18 +39,20 @@ function Dashboard() {
 	const { refetch: createRefetch } = useCreateCitizenQuery(values);
 
 	const handleChange = (e, name) => {
-		console.log(name, e);
 		const auxValues = { ...values };
 		if (name) {
-			e.map((val) => {
-				if (auxValues[name] === undefined) {
-					auxValues[name] = [];
-					auxValues[name].push(val.value);
-				} else {
-					auxValues[name].push(val.value);
-				}
-				auxValues[name] = Array.from(new Set(auxValues[name]));
-			});
+			if(e.length > 0) {
+				e.map((val) => {
+					if (auxValues[name] === undefined) {
+						auxValues[name] = [];
+						auxValues[name].push(val.value);
+					} else {
+						auxValues[name].push(val.value);
+					}
+					auxValues[name] = Array.from(new Set(auxValues[name]));
+				});
+			}
+			auxValues[name] = e.value;
 		} else {
 			auxValues[e.target.name] = e.target.value;
 			if (e.target.name === 'state') {
@@ -85,17 +87,6 @@ function Dashboard() {
 		}
 	};
 
-	const returnOptions = (data, isStateorCity) => {
-		if (data && data.success) {
-			return data.data.map((entry) => (
-				<option key={entry.id} value={entry.id}>
-					{isStateorCity ? entry.nome : entry.nomeclatura}
-				</option>
-			));
-		}
-		return null;
-	};
-
 	const shouldShowMultiValues = (value, name) => {
 		if (!verifyValue(value)) {
 			return undefined;
@@ -105,17 +96,6 @@ function Dashboard() {
 			setValues(auxValues);
 		}
 		return null;
-	};
-
-	const returnOptionsMulti = (data) => {
-		const options = [];
-		if (data && data.status === 200) {
-			data.data.map((entry) =>
-				options.push({ value: entry.id, label: entry.nomeclatura })
-			);
-			return options;
-		}
-		return [{ value: 'Sem opções', label: 'Sem Opções' }];
 	};
 
 	return (
@@ -146,7 +126,7 @@ function Dashboard() {
 											type='text'
 											handleChange={handleChange}
 											required={true}
-											sm='col-span-3'
+											size='col-span-3 md:col-span-3'
 										/>
 										<Input
 											name='lastName'
@@ -154,33 +134,20 @@ function Dashboard() {
 											type='text'
 											required={true}
 											handleChange={handleChange}
-											sm='col-span-3'
+											size='md:col-span-3'
 										/>
 										<SelectComponent
 											label='Sexo'
-											size='col-span-2'
+											size='sm:col-span-2'
 											handleChange={(e) => handleChange(e, 'sex')}
-											name='sex'
 											options={sexData}
 										/>
-
-										<div className='col-span-6 sm:col-span-2'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Cor
-											</label>
-											<select
-												name='color'
-												onChange={handleChange}
-												required
-												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
-												<option
-													value=''
-													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
-													Selecione
-												</option>
-												{returnOptions(colorsData)}
-											</select>
-										</div>
+										<SelectComponent
+											label='Cor'
+											size='sm:col-span-2'
+											handleChange={(e) => handleChange(e, 'color')}
+											options={colorsData}
+										/>
 										<div className='col-span-6 sm:col-span-2'>
 											<label className='block text-sm font-medium text-gray-700'>
 												Data de nascimento
@@ -193,182 +160,74 @@ function Dashboard() {
 												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm cursor-pointer focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
 											/>
 										</div>
-
-										<div className='col-span-6 lg:col-span-3'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Estado
-											</label>
-											<select
-												name='state'
-												onChange={handleChange}
-												required
-												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
-												<option
-													value=''
-													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
-													Selecione
-												</option>
-												{returnOptions(statesData, true)}
-											</select>
-										</div>
-
-										<div className='col-span-6  lg:col-span-3'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Cidade
-											</label>
-											<select
-												name='city'
-												value={shouldShowAnyValue(values.state, values.city)}
-												onChange={handleChange}
-												disabled={verifyValue(state)}
-												required
-												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300'>
-												<option
-													value=''
-													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
-													Selecione
-												</option>
-												{returnOptions(citiesData, true)}
-											</select>
-										</div>
-
-										<div className='col-span-6  lg:col-span-3'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Fonte de Renda
-											</label>
-											<select
-												name='incomingSource'
-												onChange={handleChange}
-												required
-												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300'>
-												<option
-													value=''
-													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
-													Selecione
-												</option>
-												{returnOptions(incomingSourcesData)}
-											</select>
-										</div>
-
-										<div className='col-span-6  lg:col-span-3'>
-											<label className='block text-sm font-medium text-gray-700'>
-												O que precisa para sair das ruas?
-											</label>
-											<input
-												name='getOutReasons'
-												type='text'
-												onChange={handleChange}
-												required
-												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-											/>
-										</div>
-
-										<div className='col-span-6  lg:col-span-1'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Quer sair das ruas?
-											</label>
-											<select
-												name='getOut'
-												onChange={handleChange}
-												required
-												className='block px-3 py-2 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
-												<option value=''>Selecione</option>
-												<option value={true}>Sim</option>
-												<option value={false}>Não</option>
-											</select>
-										</div>
-
-										<div className='col-span-6 lg:col-span-5'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Motivos para estar na rua:
-											</label>
-											<Select
-												onChange={(e) => handleChange(e, 'reasons')}
-												options={returnOptionsMulti(reasonsData)}
-												placeholder={
-													<div className='text-black'>Selecione</div>
-												}
-												isSearchable={false}
-												isMulti
-												className='block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm'
-											/>
-										</div>
-
-										<div className='col-span-6 lg:col-span-1'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Caso especial?
-											</label>
-											<select
-												name='isEspecialCase'
-												onChange={handleChange}
-												required
-												className='block px-3 py-2 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
-												<option value=''>Selecione</option>
-												<option>Sim</option>
-												<option>Não</option>
-											</select>
-										</div>
-
-										<div className='col-span-6  lg:col-span-5'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Se sim, quais casos?
-											</label>
-											<Select
-												onChange={(e) => handleChange(e, 'especialCases')}
-												options={returnOptionsMulti(especialCasesData)}
-												value={shouldShowMultiValues(
-													values.isEspecialCase,
-													'especialCases'
-												)}
-												isDisabled={verifyValue(values.isEspecialCase)}
-												placeholder={
-													<div className='text-black'>Selecione</div>
-												}
-												isSearchable={false}
-												maxMenuHeight={80}
-												isMulti
-												className='block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm'
-											/>
-										</div>
-
-										<div className='col-span-6  lg:col-span-1'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Recebe benefício?
-											</label>
-											<select
-												name='hasBenefits'
-												onChange={handleChange}
-												required
-												className='block px-3 py-2 mt-1 w-full placeholder-gray-500 bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
-												<option value='' className='bg-fuchsia-500'>
-													Selecione
-												</option>
-												<option>Sim</option>
-												<option>Não</option>
-											</select>
-										</div>
-
-										<div className='col-span-6  lg:col-span-5'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Se sim, quais benefícios?
-											</label>
-											<Select
-												onChange={(e) => handleChange(e, 'benefits')}
-												options={returnOptionsMulti(benefitsData)}
-												value={shouldShowMultiValues(
-													values.hasBenefits,
-													'benefits'
-												)}
-												isDisabled={verifyValue(values.hasBenefits)}
-												placeholder={
-													<div className='text-black'>Selecione</div>
-												}
-												isSearchable={false}
-												isMulti
-												maxMenuHeight={80}
-												className='block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm'
-											/>
-										</div>
+										<SelectComponent
+											label='Estado'
+											size='lg:col-span-3'
+											handleChange={(e) => handleChange(e, 'state')}
+											options={statesData}
+										/>
+										<SelectComponent
+											label='Cidade'
+											size='lg:col-span-3'
+											handleChange={(e) => handleChange(e, 'city')}
+											options={citiesData}
+											isDisabled={verifyValue(values.state)}
+										/>
+										<SelectComponent
+											label='Fonte de Renda'
+											size='lg:col-span-3'
+											handleChange={(e) => handleChange(e, 'incomingSource')}
+											options={incomingSourcesData}
+										/>
+										<Input
+											label='O que precisa para sair das ruas?'
+											name='getOutReasons'
+											type='text'
+											required={true}
+											handleChange={handleChange}
+											size='lg:col-span-3'
+										/>
+										<SelectComponent
+											label='Quer sair das ruas?'
+											size='lg:col-span-1'
+											handleChange={(e) => handleChange(e, 'getOut')}
+											options={[]}
+										/>
+										<SelectComponent
+											label='Motivos para estar na rua:'
+											size='lg:col-span-5'
+											handleChange={(e) => handleChange(e, 'reasons')}
+											options={reasonsData}
+											isMulti={true}
+										/>
+										<SelectComponent
+											label='Caso especial?'
+											size='lg:col-span-1'
+											handleChange={(e) => handleChange(e, 'isEspecialCase')}
+											options={[]}
+										/>
+										<SelectComponent
+											label='Se sim, quais casos?'
+											size='lg:col-span-5'
+											handleChange={(e) => handleChange(e, 'especialCases')}
+											options={especialCasesData}
+											isDisabled={verifyValue(values.isEspecialCase)}
+											isMulti={true}
+										/>
+										<SelectComponent
+											label='Recebe benefício?'
+											size='lg:col-span-1'
+											handleChange={(e) => handleChange(e, 'hasBenefits')}
+											options={[]}
+										/>
+										<SelectComponent
+											label='Se sim, quais benefícios?'
+											size='lg:col-span-5'
+											handleChange={(e) => handleChange(e, 'benefits')}
+											options={benefitsData}
+											isDisabled={verifyValue(values.hasBenefits)}
+											isMulti={true}
+										/>
 									</div>
 								</div>
 

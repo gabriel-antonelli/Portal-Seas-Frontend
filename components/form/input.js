@@ -1,6 +1,6 @@
 export function Input(props) {
 	return (
-		<div className={`col-span-6 sm:${props.sm}`}>
+		<div className={`col-span-6 ${props.size}`}>
 			<label className='block text-sm font-medium text-gray-700'>
 				{props.label}
 			</label>
