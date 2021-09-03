@@ -118,8 +118,6 @@ function Dashboard() {
 		return [{ value: 'Sem opções', label: 'Sem Opções' }];
 	};
 
-	console.log(values);
-
 	return (
 		<>
 			<Alert
