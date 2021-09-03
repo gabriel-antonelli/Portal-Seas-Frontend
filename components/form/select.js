@@ -1,7 +1,6 @@
 import Select from 'react-select';
 
 export function SelectComponent(props) {
-	
 	const returnOptionsMulti = (data) => {
 		const options = [];
 		if (data && data.status === 200) {
@@ -12,7 +11,7 @@ export function SelectComponent(props) {
 		}
 		return [{ value: 'Sem opções', label: 'Sem Opções' }];
 	};
-	
+
 	return (
 		<div className={`col-span-6 sm:${props.size}`}>
 			<label className='block text-sm font-medium text-gray-700'>
