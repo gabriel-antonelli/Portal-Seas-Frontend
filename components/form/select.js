@@ -13,6 +13,30 @@ export function SelectComponent(props) {
 					value: 'Não',
 					label: 'Não',
 				},
+				{
+					value: 'Sim',
+					label: 'Sim',
+				},
+				{
+					value: 'Não',
+					label: 'Não',
+				},
+				{
+					value: 'Sim',
+					label: 'Sim',
+				},
+				{
+					value: 'Não',
+					label: 'Não',
+				},
+				{
+					value: 'Sim',
+					label: 'Sim',
+				},
+				{
+					value: 'Não',
+					label: 'Não',
+				},
 			];
 		}
 		if (data && data.status === 200) {
@@ -34,6 +58,15 @@ export function SelectComponent(props) {
 		);
 	};
 
+	const customStyles = {
+		control: (base) => ({
+			...base,
+			"*": {
+				boxShadow: "none !important",
+			},
+		}),
+	};
+
 	return (
 		<div className={`col-span-6 ${props.size}`}>
 			<label className='block text-sm font-medium text-gray-700'>
@@ -43,12 +76,23 @@ export function SelectComponent(props) {
 				onChange={props.handleChange}
 				options={returnOptionsMulti(props.options)}
 				placeholder={<div className='text-black'>Selecione</div>}
-				isSearchable={false}
+				isSearchable={!!props.isSearchable}
 				components={{ NoOptionsMessage }}
 				isMulti={props.isMulti}
 				isDisabled={props.isDisabled}
-				required={true}
+				styles={customStyles}
+				maxMenuHeight={80}
 				className='block mt-1 w-full sm:border-red-300 sm:text-sm'
+			/>
+			<input
+				autoComplete='off'
+				style={{
+					opacity: 0,
+					height: '1px',
+					position: 'absolute',
+				}}
+				required={props.required}
+				value={props.value}
 			/>
 		</div>
 	);

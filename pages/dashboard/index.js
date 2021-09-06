@@ -85,6 +85,17 @@ function Dashboard() {
 		}
 	};
 
+	const shouldShowMultiValues = (value, name) => {
+		if (!verifyValue(value)) {
+			return undefined;
+		} else if (!verifyValue(values[name])) {
+			const auxValues = { ...values };
+			auxValues[name] = null;
+			setValues(auxValues);
+		}
+		return null;
+	};
+
 	return (
 		<>
 			<Alert
@@ -127,13 +138,19 @@ function Dashboard() {
 											label='Sexo'
 											size='sm:col-span-2'
 											handleChange={(e) => handleChangeSelect(e, 'sex')}
-											options={sexData}
+											// options={sexData}
+											value={values.sex}
+											options={'yesAndNo'}
+											required={true}
 										/>
 										<SelectComponent
 											label='Cor'
 											size='sm:col-span-2'
 											handleChange={(e) => handleChangeSelect(e, 'color')}
-											options={colorsData}
+											// options={colorsData}
+											value={values.color}
+											options={'yesAndNo'}
+											required={true}
 										/>
 										<div className='col-span-6 sm:col-span-2'>
 											<label className='block text-sm font-medium text-gray-700'>
@@ -151,14 +168,22 @@ function Dashboard() {
 											label='Estado'
 											size='lg:col-span-3'
 											handleChange={(e) => handleChangeSelect(e, 'state')}
-											options={statesData}
+											// options={statesData}
+											value={values.state}
+											isSearchable
+											options={'yesAndNo'}
+											required={true}
 										/>
 										<SelectComponent
 											label='Cidade'
 											size='lg:col-span-3'
+											isSearchable
 											handleChange={(e) => handleChangeSelect(e, 'city')}
-											options={citiesData}
+											// options={citiesData}
 											isDisabled={verifyValue(values.state)}
+											options={'yesAndNo'}
+											value={values.city}
+											required={!verifyValue(values.state)}
 										/>
 										<SelectComponent
 											label='Fonte de Renda'
@@ -166,7 +191,10 @@ function Dashboard() {
 											handleChange={(e) =>
 												handleChangeSelect(e, 'incomingSource')
 											}
-											options={incomingSourcesData}
+											// options={incomingSourcesData}
+											options={'yesAndNo'}
+											required={true}
+											value={values.incomingSource}
 										/>
 										<Input
 											label='O que precisa para sair das ruas?'
@@ -181,13 +209,18 @@ function Dashboard() {
 											size='lg:col-span-1'
 											handleChange={(e) => handleChangeSelect(e, 'getOut')}
 											options={'yesAndNo'}
+											required={true}
+											value={values.getOut}
 										/>
 										<SelectComponent
 											label='Motivos para estar na rua:'
 											size='lg:col-span-5'
 											handleChange={(e) => handleChangeSelect(e, 'reasons')}
-											options={reasonsData}
+											// options={reasonsData}
+											options={'yesAndNo'}
 											isMulti={true}
+											required={true}
+											value={values.reasons}
 										/>
 										<SelectComponent
 											label='Caso especial?'
@@ -196,6 +229,8 @@ function Dashboard() {
 												handleChangeSelect(e, 'isEspecialCase')
 											}
 											options={'yesAndNo'}
+											required={true}
+											value={values.isEspecialCase}
 										/>
 										<SelectComponent
 											label='Se sim, quais casos?'
@@ -203,23 +238,34 @@ function Dashboard() {
 											handleChange={(e) =>
 												handleChangeSelect(e, 'especialCases')
 											}
-											options={especialCasesData}
+											// options={especialCasesData}
+											options={'yesAndNo'}
 											isDisabled={verifyValue(values.isEspecialCase)}
 											isMulti={true}
+											required={!verifyValue(values.isEspecialCase)}
+											value={values.especialCases}
 										/>
 										<SelectComponent
 											label='Recebe benefício?'
 											size='lg:col-span-1'
 											handleChange={(e) => handleChangeSelect(e, 'hasBenefits')}
 											options={'yesAndNo'}
+											required={true}
+											value={values.hasBenefits}
 										/>
 										<SelectComponent
 											label='Se sim, quais benefícios?'
 											size='lg:col-span-5'
 											handleChange={(e) => handleChangeSelect(e, 'benefits')}
-											options={benefitsData}
+											// options={benefitsData}
+											options={'yesAndNo'}
 											isDisabled={verifyValue(values.hasBenefits)}
 											isMulti={true}
+											required={!verifyValue(values.hasBenefits)}
+											value={shouldShowMultiValues(
+												values.hasBenefits,
+												'benefits'
+											)}
 										/>
 									</div>
 								</div>
