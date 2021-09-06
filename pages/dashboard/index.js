@@ -138,18 +138,16 @@ function Dashboard() {
 											label='Sexo'
 											size='sm:col-span-2'
 											handleChange={(e) => handleChangeSelect(e, 'sex')}
-											// options={sexData}
+											options={sexData}
 											value={values.sex}
-											options={'yesAndNo'}
 											required={true}
 										/>
 										<SelectComponent
 											label='Cor'
 											size='sm:col-span-2'
 											handleChange={(e) => handleChangeSelect(e, 'color')}
-											// options={colorsData}
+											options={colorsData}
 											value={values.color}
-											options={'yesAndNo'}
 											required={true}
 										/>
 										<div className='col-span-6 sm:col-span-2'>
@@ -168,10 +166,9 @@ function Dashboard() {
 											label='Estado'
 											size='lg:col-span-3'
 											handleChange={(e) => handleChangeSelect(e, 'state')}
-											// options={statesData}
+											options={statesData}
 											value={values.state}
 											isSearchable
-											options={'yesAndNo'}
 											required={true}
 										/>
 										<SelectComponent
@@ -179,9 +176,8 @@ function Dashboard() {
 											size='lg:col-span-3'
 											isSearchable
 											handleChange={(e) => handleChangeSelect(e, 'city')}
-											// options={citiesData}
+											options={citiesData}
 											isDisabled={verifyValue(values.state)}
-											options={'yesAndNo'}
 											value={values.city}
 											required={!verifyValue(values.state)}
 										/>
@@ -191,8 +187,7 @@ function Dashboard() {
 											handleChange={(e) =>
 												handleChangeSelect(e, 'incomingSource')
 											}
-											// options={incomingSourcesData}
-											options={'yesAndNo'}
+											options={incomingSourcesData}
 											required={true}
 											value={values.incomingSource}
 										/>
@@ -216,8 +211,7 @@ function Dashboard() {
 											label='Motivos para estar na rua:'
 											size='lg:col-span-5'
 											handleChange={(e) => handleChangeSelect(e, 'reasons')}
-											// options={reasonsData}
-											options={'yesAndNo'}
+											options={reasonsData}
 											isMulti={true}
 											required={true}
 											value={values.reasons}
@@ -238,8 +232,7 @@ function Dashboard() {
 											handleChange={(e) =>
 												handleChangeSelect(e, 'especialCases')
 											}
-											// options={especialCasesData}
-											options={'yesAndNo'}
+											options={especialCasesData}
 											isDisabled={verifyValue(values.isEspecialCase)}
 											isMulti={true}
 											required={!verifyValue(values.isEspecialCase)}
@@ -257,8 +250,7 @@ function Dashboard() {
 											label='Se sim, quais benefícios?'
 											size='lg:col-span-5'
 											handleChange={(e) => handleChangeSelect(e, 'benefits')}
-											// options={benefitsData}
-											options={'yesAndNo'}
+											options={benefitsData}
 											isDisabled={verifyValue(values.hasBenefits)}
 											isMulti={true}
 											required={!verifyValue(values.hasBenefits)}

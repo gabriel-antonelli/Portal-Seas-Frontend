@@ -61,8 +61,8 @@ export function SelectComponent(props) {
 	const customStyles = {
 		control: (base) => ({
 			...base,
-			"*": {
-				boxShadow: "none !important",
+			'*': {
+				boxShadow: 'none !important',
 			},
 		}),
 	};
