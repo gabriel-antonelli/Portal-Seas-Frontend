@@ -80,7 +80,7 @@ function Dashboard() {
 			setAlert({
 				show: true,
 				label: 'Não foi possível realizar o cadastro.',
-				type: 'Erro'
+				type: 'Erro',
 			});
 		}
 	};
