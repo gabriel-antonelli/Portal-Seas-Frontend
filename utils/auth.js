@@ -47,15 +47,15 @@ export function withAuth(Component) {
 			if (typeof window !== 'undefined') {
 				const newFetch = await refetch();
 				await setLoading(newFetch.isLoading);
-				// if (
-				// 	GetCookie(process.env.NEXT_PUBLIC_TOKEN).tokenValue &&
-				// 	newFetch.isSuccess &&
-				// 	newFetch.data.success
-				// ) {
+				if (
+					GetCookie(process.env.NEXT_PUBLIC_TOKEN).tokenValue &&
+					newFetch.isSuccess &&
+					newFetch.data.success
+				) {
 				await setLoginStatus(true);
-				// } else {
-				// 	await Router.push('/');
-				// }
+				} else {
+					await Router.push('/');
+				}
 			}
 		}
 
@@ -63,19 +63,19 @@ export function withAuth(Component) {
 			verify();
 		}, []);
 
-		// if (isLoggedIn) {
+		if (isLoggedIn) {
 		return (
 			<>
 				<NavBar />
 				<Component {...pageProps} />
 			</>
 		);
-		// }
+		}
 
 		if (loading) {
 			return <Loading show={true} />;
 		}
 
-		// return <LoginPage />;
+		return <LoginPage />;
 	};
 }

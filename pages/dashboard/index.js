@@ -1,5 +1,5 @@
 //Libs
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 //Providers
 import {
 	useIncomeSourcesQuery,
@@ -22,14 +22,14 @@ import { useCreateCitizenQuery } from '../../providers/citizenProviders/createCi
 function Dashboard() {
 	const [values, setValues] = useState({});
 	const [alert, setAlert] = useState({ show: false });
-	const [state, setState] = useState();
+	const stateRef = useRef();
 	const { data: sexData } = useListSexQuery();
 	const { data: colorsData } = useListColorsQuery();
 	const { data: reasonsData } = useListReasonsQuery();
 	const { data: benefitsData } = useListBenefitsQuery();
 	const { data: especialCasesData } = useListEspecialCasesQuery();
 	const { data: statesData } = useListStatesQuery();
-	const { data: citiesData, refetch: fetchCities } = useListCitiesQuery(state);
+	const { data: citiesData, refetch: fetchCities } = useListCitiesQuery(stateRef.current);
 	const { data: incomingSourcesData } = useIncomeSourcesQuery();
 	const { refetch: createRefetch } = useCreateCitizenQuery(values);
 
@@ -42,30 +42,22 @@ function Dashboard() {
 	const handleChangeSelect = (e, name) => {
 		const auxValues = { ...values };
 		if (e.length > 0) {
+			auxValues[name] = [];
 			e.map((val) => {
-				if (auxValues[name] === undefined) {
-					auxValues[name] = [];
-					auxValues[name].push(val.value);
-				} else {
-					auxValues[name].push(val.value);
-				}
-				auxValues[name] = Array.from(new Set(auxValues[name]));
+				auxValues[name].push(val.value);
 			});
+			auxValues[name] = Array.from(new Set(auxValues[name]));
 		} else {
-			if (name === 'state') {
-				getCities(e.value);
-			}
 			auxValues[name] = e.value;
 		}
 		setValues(auxValues);
-	};
-
-	const getCities = async (id) => {
-		await setState(id);
-		if (!verifyValue(id)) {
-			await fetchCities();
+		if (name === 'state') {
+			stateRef.current = e.value
+			fetchCities();
 		}
 	};
+
+	console.log(stateRef);
 
 	const handleSubmit = async (e) => {
 		await e.preventDefault();
@@ -212,7 +204,7 @@ function Dashboard() {
 											size='lg:col-span-5'
 											handleChange={(e) => handleChangeSelect(e, 'reasons')}
 											options={reasonsData}
-											isMulti={true}
+											isMulti
 											required={true}
 											value={values.reasons}
 										/>
@@ -234,7 +226,7 @@ function Dashboard() {
 											}
 											options={especialCasesData}
 											isDisabled={verifyValue(values.isEspecialCase)}
-											isMulti={true}
+											isMulti
 											required={!verifyValue(values.isEspecialCase)}
 											value={values.especialCases}
 										/>
@@ -252,17 +244,18 @@ function Dashboard() {
 											handleChange={(e) => handleChangeSelect(e, 'benefits')}
 											options={benefitsData}
 											isDisabled={verifyValue(values.hasBenefits)}
-											isMulti={true}
+											isMulti
 											required={!verifyValue(values.hasBenefits)}
 											value={shouldShowMultiValues(
 												values.hasBenefits,
-												'benefits'
+												'benefits',
 											)}
 										/>
 									</div>
 								</div>
 								<div className='px-4 py-3 text-right bg-gray-50 sm:px-6'>
-									<button className='inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-md border border-transparent shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+									<button
+										className='inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-md border border-transparent shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
 										Cadastrar
 									</button>
 								</div>

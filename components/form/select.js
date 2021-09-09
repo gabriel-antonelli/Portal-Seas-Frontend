@@ -74,11 +74,12 @@ export function SelectComponent(props) {
 			</label>
 			<Select
 				onChange={props.handleChange}
-				options={returnOptionsMulti(props.options)}
+				options={returnOptionsMulti("yesAndNo")}
+				// value={props.isDisabled && ""}
 				placeholder={<div className='text-black'>Selecione</div>}
 				isSearchable={!!props.isSearchable}
 				components={{ NoOptionsMessage }}
-				isMulti={props.isMulti}
+				isMulti={!!props.isMulti}
 				isDisabled={props.isDisabled}
 				styles={customStyles}
 				maxMenuHeight={80}
