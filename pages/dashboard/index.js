@@ -29,7 +29,9 @@ function Dashboard() {
 	const { data: benefitsData } = useListBenefitsQuery();
 	const { data: especialCasesData } = useListEspecialCasesQuery();
 	const { data: statesData } = useListStatesQuery();
-	const { data: citiesData, refetch: fetchCities } = useListCitiesQuery(stateRef.current);
+	const { data: citiesData, refetch: fetchCities } = useListCitiesQuery(
+		stateRef.current
+	);
 	const { data: incomingSourcesData } = useIncomeSourcesQuery();
 	const { refetch: createRefetch } = useCreateCitizenQuery(values);
 
@@ -52,7 +54,7 @@ function Dashboard() {
 		}
 		setValues(auxValues);
 		if (name === 'state') {
-			stateRef.current = e.value
+			stateRef.current = e.value;
 			fetchCities();
 		}
 	};
@@ -248,14 +250,13 @@ function Dashboard() {
 											required={!verifyValue(values.hasBenefits)}
 											value={shouldShowMultiValues(
 												values.hasBenefits,
-												'benefits',
+												'benefits'
 											)}
 										/>
 									</div>
 								</div>
 								<div className='px-4 py-3 text-right bg-gray-50 sm:px-6'>
-									<button
-										className='inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-md border border-transparent shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+									<button className='inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-md border border-transparent shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
 										Cadastrar
 									</button>
 								</div>

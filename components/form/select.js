@@ -74,7 +74,7 @@ export function SelectComponent(props) {
 			</label>
 			<Select
 				onChange={props.handleChange}
-				options={returnOptionsMulti("yesAndNo")}
+				options={returnOptionsMulti('yesAndNo')}
 				// value={props.isDisabled && ""}
 				placeholder={<div className='text-black'>Selecione</div>}
 				isSearchable={!!props.isSearchable}

@@ -52,7 +52,7 @@ export function withAuth(Component) {
 					newFetch.isSuccess &&
 					newFetch.data.success
 				) {
-				await setLoginStatus(true);
+					await setLoginStatus(true);
 				} else {
 					await Router.push('/');
 				}
@@ -64,12 +64,12 @@ export function withAuth(Component) {
 		}, []);
 
 		if (isLoggedIn) {
-		return (
-			<>
-				<NavBar />
-				<Component {...pageProps} />
-			</>
-		);
+			return (
+				<>
+					<NavBar />
+					<Component {...pageProps} />
+				</>
+			);
 		}
 
 		if (loading) {
