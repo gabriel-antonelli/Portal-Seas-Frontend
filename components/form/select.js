@@ -14,28 +14,12 @@ export function SelectComponent(props) {
 					label: 'Não',
 				},
 				{
-					value: 'Sim',
-					label: 'Sim',
+					value: 1,
+					label: 'Jundiaí',
 				},
 				{
-					value: 'Não',
-					label: 'Não',
-				},
-				{
-					value: 'Sim',
-					label: 'Sim',
-				},
-				{
-					value: 'Não',
-					label: 'Não',
-				},
-				{
-					value: 'Sim',
-					label: 'Sim',
-				},
-				{
-					value: 'Não',
-					label: 'Não',
+					value: 2,
+					label: 'São Paulo',
 				},
 			];
 		}
@@ -67,6 +51,21 @@ export function SelectComponent(props) {
 		}),
 	};
 
+	const handleValues = () => {
+		const values = [];
+		if(props.value && !props.isDisabled) {
+			if (typeof props.value !== 'string') {
+				props.value.map((entry) => {
+					values.push(returnOptionsMulti('yesAndNo').find(option => option.value === entry));
+				})
+			}
+			if(!values.length > 0) {
+				values.push(returnOptionsMulti('yesAndNo').find(option => option.value === props.value));
+			}
+		}
+		return values;
+	}
+
 	return (
 		<div className={`col-span-6 ${props.size}`}>
 			<label className='block text-sm font-medium text-gray-700'>
@@ -75,7 +74,7 @@ export function SelectComponent(props) {
 			<Select
 				onChange={props.handleChange}
 				options={returnOptionsMulti('yesAndNo')}
-				// value={props.isDisabled && ""}
+				value={handleValues()}
 				placeholder={<div className='text-black'>Selecione</div>}
 				isSearchable={!!props.isSearchable}
 				components={{ NoOptionsMessage }}

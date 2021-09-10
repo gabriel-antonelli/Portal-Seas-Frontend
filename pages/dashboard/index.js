@@ -1,5 +1,5 @@
 //Libs
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 //Providers
 import {
 	useIncomeSourcesQuery,
@@ -22,7 +22,6 @@ import { useCreateCitizenQuery } from '../../providers/citizenProviders/createCi
 function Dashboard() {
 	const [values, setValues] = useState({});
 	const [alert, setAlert] = useState({ show: false });
-	const stateRef = useRef();
 	const { data: sexData } = useListSexQuery();
 	const { data: colorsData } = useListColorsQuery();
 	const { data: reasonsData } = useListReasonsQuery();
@@ -30,10 +29,16 @@ function Dashboard() {
 	const { data: especialCasesData } = useListEspecialCasesQuery();
 	const { data: statesData } = useListStatesQuery();
 	const { data: citiesData, refetch: fetchCities } = useListCitiesQuery(
-		stateRef.current
+		values['state']
 	);
 	const { data: incomingSourcesData } = useIncomeSourcesQuery();
 	const { refetch: createRefetch } = useCreateCitizenQuery(values);
+
+	useEffect(() => {
+		if (!verifyValue(values.state)) {
+			fetchCities();
+		}
+	}, [fetchCities, values.state]);
 
 	const handleChangeInput = (e) => {
 		const auxValues = { ...values };
@@ -53,13 +58,7 @@ function Dashboard() {
 			auxValues[name] = e.value;
 		}
 		setValues(auxValues);
-		if (name === 'state') {
-			stateRef.current = e.value;
-			fetchCities();
-		}
 	};
-
-	console.log(stateRef);
 
 	const handleSubmit = async (e) => {
 		await e.preventDefault();
@@ -80,14 +79,12 @@ function Dashboard() {
 	};
 
 	const shouldShowMultiValues = (value, name) => {
-		if (!verifyValue(value)) {
-			return undefined;
-		} else if (!verifyValue(values[name])) {
-			const auxValues = { ...values };
+		const auxValues = { ...values };
+		if (verifyValue(value) && auxValues[name] !== null) {
 			auxValues[name] = null;
 			setValues(auxValues);
 		}
-		return null;
+		return auxValues[name];
 	};
 
 	return (
@@ -172,7 +169,10 @@ function Dashboard() {
 											handleChange={(e) => handleChangeSelect(e, 'city')}
 											options={citiesData}
 											isDisabled={verifyValue(values.state)}
-											value={values.city}
+											value={shouldShowMultiValues(
+												values.state,
+												'city'
+											)}
 											required={!verifyValue(values.state)}
 										/>
 										<SelectComponent
@@ -230,7 +230,10 @@ function Dashboard() {
 											isDisabled={verifyValue(values.isEspecialCase)}
 											isMulti
 											required={!verifyValue(values.isEspecialCase)}
-											value={values.especialCases}
+											value={shouldShowMultiValues(
+												values.isEspecialCase,
+												'especialCases'
+											)}
 										/>
 										<SelectComponent
 											label='Recebe benefício?'
