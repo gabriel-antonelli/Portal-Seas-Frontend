@@ -53,18 +53,26 @@ export function SelectComponent(props) {
 
 	const handleValues = () => {
 		const values = [];
-		if(props.value && !props.isDisabled) {
+		if (props.value && !props.isDisabled) {
 			if (typeof props.value !== 'string') {
 				props.value.map((entry) => {
-					values.push(returnOptionsMulti('yesAndNo').find(option => option.value === entry));
-				})
+					values.push(
+						returnOptionsMulti('yesAndNo').find(
+							(option) => option.value === entry
+						)
+					);
+				});
 			}
-			if(!values.length > 0) {
-				values.push(returnOptionsMulti('yesAndNo').find(option => option.value === props.value));
+			if (!values.length > 0) {
+				values.push(
+					returnOptionsMulti('yesAndNo').find(
+						(option) => option.value === props.value
+					)
+				);
 			}
 		}
 		return values;
-	}
+	};
 
 	return (
 		<div className={`col-span-6 ${props.size}`}>

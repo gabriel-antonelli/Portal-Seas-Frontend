@@ -169,10 +169,7 @@ function Dashboard() {
 											handleChange={(e) => handleChangeSelect(e, 'city')}
 											options={citiesData}
 											isDisabled={verifyValue(values.state)}
-											value={shouldShowMultiValues(
-												values.state,
-												'city'
-											)}
+											value={shouldShowMultiValues(values.state, 'city')}
 											required={!verifyValue(values.state)}
 										/>
 										<SelectComponent
