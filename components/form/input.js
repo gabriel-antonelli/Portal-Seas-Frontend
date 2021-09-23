@@ -9,6 +9,7 @@ export function Input(props) {
 				type={props.type}
 				onChange={props.handleChange}
 				required={props.required}
+				value={props.value === undefined ? '' : props.value}
 				disabled={props.disabled}
 				className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
 			/>

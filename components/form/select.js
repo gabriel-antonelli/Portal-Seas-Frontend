@@ -13,19 +13,14 @@ export function SelectComponent(props) {
 					value: 'Não',
 					label: 'Não',
 				},
-				{
-					value: 1,
-					label: 'Jundiaí',
-				},
-				{
-					value: 2,
-					label: 'São Paulo',
-				},
 			];
 		}
 		if (data && data.status === 200) {
 			data.data.map((entry) =>
-				options.push({ value: entry.id, label: entry.nomeclatura })
+				options.push({
+					value: entry.id,
+					label: entry.nomeclatura ? entry.nomeclatura : entry.nome,
+				})
 			);
 			return options;
 		}
@@ -54,10 +49,10 @@ export function SelectComponent(props) {
 	const handleValues = () => {
 		const values = [];
 		if (props.value && !props.isDisabled) {
-			if (typeof props.value !== 'string') {
+			if (typeof props.value !== 'string' && typeof props.value !== 'number') {
 				props.value.map((entry) => {
 					values.push(
-						returnOptionsMulti('yesAndNo').find(
+						returnOptionsMulti(props.options).find(
 							(option) => option.value === entry
 						)
 					);
@@ -65,7 +60,7 @@ export function SelectComponent(props) {
 			}
 			if (!values.length > 0) {
 				values.push(
-					returnOptionsMulti('yesAndNo').find(
+					returnOptionsMulti(props.options).find(
 						(option) => option.value === props.value
 					)
 				);
@@ -81,7 +76,7 @@ export function SelectComponent(props) {
 			</label>
 			<Select
 				onChange={props.handleChange}
-				options={returnOptionsMulti('yesAndNo')}
+				options={returnOptionsMulti(props.options)}
 				value={handleValues()}
 				placeholder={<div className='text-black'>Selecione</div>}
 				isSearchable={!!props.isSearchable}
@@ -100,7 +95,7 @@ export function SelectComponent(props) {
 					position: 'absolute',
 				}}
 				required={props.required}
-				value={props.value}
+				value={props.value ? props.value : ''}
 			/>
 		</div>
 	);

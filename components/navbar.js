@@ -9,7 +9,7 @@ import { LogOut } from '../utils';
 
 const navigation = [
 	{ name: 'Cadastro de Cidadão', href: '/dashboard', index: true },
-	{ name: 'Registros', href: '/dashboard/registries' },
+	{ name: 'Cidadãos', href: '/dashboard/registries' },
 	{ name: 'Mapa', href: '#3' },
 	{ name: 'Calendário', href: '#4' },
 ];

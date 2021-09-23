@@ -34,7 +34,7 @@ export default function LoginPage() {
 		setLoading(true);
 		const newFetch = await refetch();
 		if (newFetch.isSuccess && newFetch.data.success) {
-			SetToken('ASDJKLDSLJKDAKJLDJAKLLJKSD');
+			SetToken(newFetch.data.data.token);
 			await router.push('/dashboard');
 		} else {
 			setAlert(true);
@@ -42,16 +42,12 @@ export default function LoginPage() {
 		setLoading(false);
 	};
 
-	const handleShow = () => {
-		setAlert(!alert);
-	};
-
 	return (
 		<>
 			<Loading show={loading} />
 			<Alert
 				show={alert}
-				func={handleShow}
+				func={() => setAlert({ show: !alert.show })}
 				label='Email e/ou senha inválido(s).'
 				type={'Erro'}
 			/>
@@ -81,7 +77,7 @@ export default function LoginPage() {
 									<label className='sr-only'>Email</label>
 									<input
 										name='email'
-										type='email'
+										type='text'
 										id='email'
 										required
 										value={state.email}

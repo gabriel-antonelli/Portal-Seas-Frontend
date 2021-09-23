@@ -14,7 +14,7 @@ import {
 //Aux
 import { verifyValue, withAuth } from '../../utils';
 //Components
-import { Alert, Description } from '../../components';
+import { Alert, Description, Loading } from '../../components';
 import { Input, SelectComponent } from '../../components/form';
 import Head from 'next/head';
 import { useCreateCitizenQuery } from '../../providers/citizenProviders/createCitizenQuery';
@@ -22,6 +22,7 @@ import { useCreateCitizenQuery } from '../../providers/citizenProviders/createCi
 function Dashboard() {
 	const [values, setValues] = useState({});
 	const [alert, setAlert] = useState({ show: false });
+	const [loading, setLoading] = useState(false);
 	const { data: sexData } = useListSexQuery();
 	const { data: colorsData } = useListColorsQuery();
 	const { data: reasonsData } = useListReasonsQuery();
@@ -55,20 +56,22 @@ function Dashboard() {
 			});
 			auxValues[name] = Array.from(new Set(auxValues[name]));
 		} else {
-			auxValues[name] = e.value;
+			auxValues[name] = e.value ? e.value : null;
 		}
 		setValues(auxValues);
 	};
 
 	const handleSubmit = async (e) => {
 		await e.preventDefault();
+		setLoading(true);
 		const newFetch = await createRefetch();
 		if (newFetch.data.status === 200 && newFetch.isSuccess) {
 			setAlert({
 				show: true,
-				color: 'blue',
-				msg: 'Cadastro realizado com sucesso.',
+				type: 'Sucesso',
+				label: 'Cadastro realizado com sucesso.',
 			});
+			setValues({});
 		} else {
 			setAlert({
 				show: true,
@@ -76,6 +79,7 @@ function Dashboard() {
 				type: 'Erro',
 			});
 		}
+		setLoading(false);
 	};
 
 	const shouldShowMultiValues = (value, name) => {
@@ -89,6 +93,7 @@ function Dashboard() {
 
 	return (
 		<>
+			<Loading show={loading} />
 			<Alert
 				show={alert.show}
 				func={() => setAlert({ show: !alert.show })}
@@ -113,6 +118,7 @@ function Dashboard() {
 											name='name'
 											label='Nome'
 											type='text'
+											value={values.name}
 											handleChange={handleChangeInput}
 											required={true}
 											size='col-span-3 md:col-span-3'
@@ -121,6 +127,7 @@ function Dashboard() {
 											name='lastName'
 											label='Sobrenome'
 											type='text'
+											value={values.lastName}
 											required={true}
 											handleChange={handleChangeInput}
 											size='md:col-span-3'
@@ -150,6 +157,9 @@ function Dashboard() {
 												type='date'
 												onChange={handleChangeInput}
 												required
+												value={
+													values.birthday === undefined ? '' : values.birthday
+												}
 												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm cursor-pointer focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
 											/>
 										</div>
@@ -186,6 +196,7 @@ function Dashboard() {
 											label='O que precisa para sair das ruas?'
 											name='getOutReasons'
 											type='text'
+											value={values.getOutReasons}
 											required={true}
 											handleChange={handleChangeInput}
 											size='lg:col-span-3'
