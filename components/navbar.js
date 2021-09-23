@@ -9,7 +9,7 @@ import { LogOut } from '../utils';
 
 const navigation = [
 	{ name: 'Cadastro de Cidadão', href: '/dashboard', index: true },
-	{ name: 'Registros', href: '/dashboard/registries' },
+	{ name: 'Cidadãos', href: '/dashboard/registries' },
 	{ name: 'Mapa', href: '#3' },
 	{ name: 'Calendário', href: '#4' },
 ];
@@ -24,6 +24,10 @@ export function NavBar() {
 		return router.asPath.endsWith(item);
 	};
 
+	const backToIndex = async () => {
+		await router.push('/dashboard');
+	};
+
 	return (
 		<Disclosure as='nav' className='bg-gray-800'>
 			{({ open }) => (
@@ -32,7 +36,6 @@ export function NavBar() {
 						<div className='flex relative justify-between items-center h-16'>
 							<div className='flex absolute inset-y-0 left-0 items-center sm:hidden'>
 								<Disclosure.Button className='inline-flex justify-center items-center p-2 text-gray-400 rounded-md hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white'>
-									<span className='sr-only'>Open main menu</span>
 									{open ? (
 										<XIcon className='block w-6 h-6' aria-hidden='true' />
 									) : (
@@ -41,7 +44,9 @@ export function NavBar() {
 								</Disclosure.Button>
 							</div>
 							<div className='flex flex-1 justify-center items-center sm:items-stretch sm:justify-start'>
-								<div className='flex flex-shrink-0 justify-center items-center'>
+								<div
+									className='flex flex-shrink-0 justify-center items-center cursor-pointer'
+									onClick={backToIndex}>
 									<Image
 										src='/assets/navbar-test.png'
 										width='50px'
@@ -71,13 +76,13 @@ export function NavBar() {
 							</div>
 							<div className='flex absolute inset-y-0 right-0 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
 								<Menu as='div' className='relative ml-3'>
-									{({ open }) => (
+									{({ showMenu }) => (
 										<>
 											<div>
 												<Menu.Button className='flex text-sm bg-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'>
 													<Image
 														className='w-8 h-8 rounded-full'
-														src='/assets/user.png'
+														src='https://avatars.dicebear.com/api/initials/felipe_brandelli.svg'
 														alt='imagem do usuário'
 														width='30px'
 														height='30px'
@@ -85,7 +90,7 @@ export function NavBar() {
 												</Menu.Button>
 											</div>
 											<Transition
-												show={open}
+												show={showMenu}
 												as={Fragment}
 												enter='transition ease-out duration-100'
 												enterFrom='transform opacity-0 scale-95'

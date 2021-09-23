@@ -7,8 +7,8 @@ export function useCreateCitizenQuery(values) {
 			url: 'cidadao',
 			type: 'post',
 			body: {
-				beneficios: values.benefits,
-				casosEspeciais: values.benefits,
+				beneficios: values.benefits ? values.benefits : [],
+				casosEspeciais: values.especialCases ? values.especialCases : [],
 				cidadeNascimento: parseInt(values.city),
 				cor: parseInt(values.color),
 				dataNascimento: values.birthday,

@@ -1,7 +1,5 @@
 //Libs
-import { useState } from 'react';
-import Select from 'react-select';
-
+import { useEffect, useState } from 'react';
 //Providers
 import {
 	useIncomeSourcesQuery,
@@ -13,12 +11,10 @@ import {
 	useListSexQuery,
 	useListStatesQuery,
 } from '../../providers';
-
 //Aux
-import { shouldShowAnyValue, verifyValue, withAuth } from '../../utils';
-
+import { verifyValue, withAuth } from '../../utils';
 //Components
-import { Alert, Description } from '../../components';
+import { Alert, Description, Loading } from '../../components';
 import { Input, SelectComponent } from '../../components/form';
 import Head from 'next/head';
 import { useCreateCitizenQuery } from '../../providers/citizenProviders/createCitizenQuery';
@@ -26,107 +22,83 @@ import { useCreateCitizenQuery } from '../../providers/citizenProviders/createCi
 function Dashboard() {
 	const [values, setValues] = useState({});
 	const [alert, setAlert] = useState({ show: false });
-	const [state, setState] = useState();
-
+	const [loading, setLoading] = useState(false);
 	const { data: sexData } = useListSexQuery();
 	const { data: colorsData } = useListColorsQuery();
 	const { data: reasonsData } = useListReasonsQuery();
 	const { data: benefitsData } = useListBenefitsQuery();
 	const { data: especialCasesData } = useListEspecialCasesQuery();
 	const { data: statesData } = useListStatesQuery();
-	const { data: citiesData, refetch } = useListCitiesQuery(state);
+	const { data: citiesData, refetch: fetchCities } = useListCitiesQuery(
+		values['state']
+	);
 	const { data: incomingSourcesData } = useIncomeSourcesQuery();
 	const { refetch: createRefetch } = useCreateCitizenQuery(values);
 
-	const handleChange = (e, name) => {
-		console.log(name, e);
+	useEffect(() => {
+		if (!verifyValue(values.state)) {
+			fetchCities();
+		}
+	}, [fetchCities, values.state]);
+
+	const handleChangeInput = (e) => {
 		const auxValues = { ...values };
-		if (name) {
+		auxValues[e.target.name] = e.target.value;
+		setValues(auxValues);
+	};
+
+	const handleChangeSelect = (e, name) => {
+		const auxValues = { ...values };
+		if (e.length > 0) {
+			auxValues[name] = [];
 			e.map((val) => {
-				if (auxValues[name] === undefined) {
-					auxValues[name] = [];
-					auxValues[name].push(val.value);
-				} else {
-					auxValues[name].push(val.value);
-				}
-				auxValues[name] = Array.from(new Set(auxValues[name]));
+				auxValues[name].push(val.value);
 			});
+			auxValues[name] = Array.from(new Set(auxValues[name]));
 		} else {
-			auxValues[e.target.name] = e.target.value;
-			if (e.target.name === 'state') {
-				getCities(e.target.value);
-			}
+			auxValues[name] = e.value ? e.value : null;
 		}
 		setValues(auxValues);
 	};
 
 	const handleSubmit = async (e) => {
 		await e.preventDefault();
+		setLoading(true);
 		const newFetch = await createRefetch();
 		if (newFetch.data.status === 200 && newFetch.isSuccess) {
 			setAlert({
 				show: true,
-				color: 'blue',
-				msg: 'Cadastro realizado com sucesso.',
+				type: 'Sucesso',
+				label: 'Cadastro realizado com sucesso.',
 			});
+			setValues({});
 		} else {
 			setAlert({
 				show: true,
-				color: 'red',
-				msg: 'Não foi possível realizar o cadastro.',
+				label: 'Não foi possível realizar o cadastro.',
+				type: 'Erro',
 			});
 		}
-	};
-
-	const getCities = async (id) => {
-		await setState(id);
-		if (!verifyValue(id)) {
-			await refetch();
-		}
-	};
-
-	const returnOptions = (data, isStateorCity) => {
-		if (data && data.success) {
-			return data.data.map((entry) => (
-				<option key={entry.id} value={entry.id}>
-					{isStateorCity ? entry.nome : entry.nomeclatura}
-				</option>
-			));
-		}
-		return null;
+		setLoading(false);
 	};
 
 	const shouldShowMultiValues = (value, name) => {
-		if (!verifyValue(value)) {
-			return undefined;
-		} else if (!verifyValue(values[name])) {
-			const auxValues = { ...values };
+		const auxValues = { ...values };
+		if (verifyValue(value) && auxValues[name] !== null) {
 			auxValues[name] = null;
 			setValues(auxValues);
 		}
-		return null;
+		return auxValues[name];
 	};
-
-	const returnOptionsMulti = (data) => {
-		const options = [];
-		if (data && data.status === 200) {
-			data.data.map((entry) =>
-				options.push({ value: entry.id, label: entry.nomeclatura })
-			);
-			return options;
-		}
-		return [{ value: 'Sem opções', label: 'Sem Opções' }];
-	};
-
-	console.log(values);
 
 	return (
 		<>
+			<Loading show={loading} />
 			<Alert
 				show={alert.show}
 				func={() => setAlert({ show: !alert.show })}
-				label={alert.msg}
-				color={alert.color}
+				label={alert.label}
+				type={alert.type}
 			/>
 			<Head>
 				<title>Cadastro de Cidadão</title>
@@ -146,43 +118,36 @@ function Dashboard() {
 											name='name'
 											label='Nome'
 											type='text'
-											handleChange={handleChange}
+											value={values.name}
+											handleChange={handleChangeInput}
 											required={true}
-											sm='col-span-3'
+											size='col-span-3 md:col-span-3'
 										/>
 										<Input
 											name='lastName'
 											label='Sobrenome'
 											type='text'
+											value={values.lastName}
 											required={true}
-											handleChange={handleChange}
-											sm='col-span-3'
+											handleChange={handleChangeInput}
+											size='md:col-span-3'
 										/>
 										<SelectComponent
 											label='Sexo'
-											size='col-span-2'
-											handleChange={(e) => handleChange(e, 'sex')}
-											name='sex'
+											size='sm:col-span-2'
+											handleChange={(e) => handleChangeSelect(e, 'sex')}
 											options={sexData}
+											value={values.sex}
+											required={true}
 										/>
-
-										<div className='col-span-6 sm:col-span-2'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Cor
-											</label>
-											<select
-												name='color'
-												onChange={handleChange}
-												required
-												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
-												<option
-													value=''
-													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
-													Selecione
-												</option>
-												{returnOptions(colorsData)}
-											</select>
-										</div>
+										<SelectComponent
+											label='Cor'
+											size='sm:col-span-2'
+											handleChange={(e) => handleChangeSelect(e, 'color')}
+											options={colorsData}
+											value={values.color}
+											required={true}
+										/>
 										<div className='col-span-6 sm:col-span-2'>
 											<label className='block text-sm font-medium text-gray-700'>
 												Data de nascimento
@@ -190,190 +155,117 @@ function Dashboard() {
 											<input
 												name='birthday'
 												type='date'
-												onChange={handleChange}
+												onChange={handleChangeInput}
 												required
+												value={
+													values.birthday === undefined ? '' : values.birthday
+												}
 												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm cursor-pointer focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
 											/>
 										</div>
-
-										<div className='col-span-6 lg:col-span-3'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Estado
-											</label>
-											<select
-												name='state'
-												onChange={handleChange}
-												required
-												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
-												<option
-													value=''
-													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
-													Selecione
-												</option>
-												{returnOptions(statesData, true)}
-											</select>
-										</div>
-
-										<div className='col-span-6  lg:col-span-3'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Cidade
-											</label>
-											<select
-												name='city'
-												value={shouldShowAnyValue(values.state, values.city)}
-												onChange={handleChange}
-												disabled={verifyValue(state)}
-												required
-												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300'>
-												<option
-													value=''
-													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
-													Selecione
-												</option>
-												{returnOptions(citiesData, true)}
-											</select>
-										</div>
-
-										<div className='col-span-6  lg:col-span-3'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Fonte de Renda
-											</label>
-											<select
-												name='incomingSource'
-												onChange={handleChange}
-												required
-												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-300'>
-												<option
-													value=''
-													className='block mt-1 w-full rounded-md border-gray-300 shadow-sm'>
-													Selecione
-												</option>
-												{returnOptions(incomingSourcesData)}
-											</select>
-										</div>
-
-										<div className='col-span-6  lg:col-span-3'>
-											<label className='block text-sm font-medium text-gray-700'>
-												O que precisa para sair das ruas?
-											</label>
-											<input
-												name='getOutReasons'
-												type='text'
-												onChange={handleChange}
-												required
-												className='block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-											/>
-										</div>
-
-										<div className='col-span-6  lg:col-span-1'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Quer sair das ruas?
-											</label>
-											<select
-												name='getOut'
-												onChange={handleChange}
-												required
-												className='block px-3 py-2 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
-												<option value=''>Selecione</option>
-												<option value={true}>Sim</option>
-												<option value={false}>Não</option>
-											</select>
-										</div>
-
-										<div className='col-span-6 lg:col-span-5'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Motivos para estar na rua:
-											</label>
-											<Select
-												onChange={(e) => handleChange(e, 'reasons')}
-												options={returnOptionsMulti(reasonsData)}
-												placeholder={
-													<div className='text-black'>Selecione</div>
-												}
-												isSearchable={false}
-												isMulti
-												className='block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm'
-											/>
-										</div>
-
-										<div className='col-span-6 lg:col-span-1'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Caso especial?
-											</label>
-											<select
-												name='isEspecialCase'
-												onChange={handleChange}
-												required
-												className='block px-3 py-2 mt-1 w-full bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
-												<option value=''>Selecione</option>
-												<option>Sim</option>
-												<option>Não</option>
-											</select>
-										</div>
-
-										<div className='col-span-6  lg:col-span-5'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Se sim, quais casos?
-											</label>
-											<Select
-												onChange={(e) => handleChange(e, 'especialCases')}
-												options={returnOptionsMulti(especialCasesData)}
-												value={shouldShowMultiValues(
-													values.isEspecialCase,
-													'especialCases'
-												)}
-												isDisabled={verifyValue(values.isEspecialCase)}
-												placeholder={
-													<div className='text-black'>Selecione</div>
-												}
-												isSearchable={false}
-												maxMenuHeight={80}
-												isMulti
-												className='block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm'
-											/>
-										</div>
-
-										<div className='col-span-6  lg:col-span-1'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Recebe benefício?
-											</label>
-											<select
-												name='hasBenefits'
-												onChange={handleChange}
-												required
-												className='block px-3 py-2 mt-1 w-full placeholder-gray-500 bg-white rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'>
-												<option value='' className='bg-fuchsia-500'>
-													Selecione
-												</option>
-												<option>Sim</option>
-												<option>Não</option>
-											</select>
-										</div>
-
-										<div className='col-span-6  lg:col-span-5'>
-											<label className='block text-sm font-medium text-gray-700'>
-												Se sim, quais benefícios?
-											</label>
-											<Select
-												onChange={(e) => handleChange(e, 'benefits')}
-												options={returnOptionsMulti(benefitsData)}
-												value={shouldShowMultiValues(
-													values.hasBenefits,
-													'benefits'
-												)}
-												isDisabled={verifyValue(values.hasBenefits)}
-												placeholder={
-													<div className='text-black'>Selecione</div>
-												}
-												isSearchable={false}
-												isMulti
-												maxMenuHeight={80}
-												className='block mt-1 w-full placeholder-gray-500 border-gray-300 shadow-sm sm:text-sm'
-											/>
-										</div>
+										<SelectComponent
+											label='Estado'
+											size='lg:col-span-3'
+											handleChange={(e) => handleChangeSelect(e, 'state')}
+											options={statesData}
+											value={values.state}
+											isSearchable
+											required={true}
+										/>
+										<SelectComponent
+											label='Cidade'
+											size='lg:col-span-3'
+											isSearchable
+											handleChange={(e) => handleChangeSelect(e, 'city')}
+											options={citiesData}
+											isDisabled={verifyValue(values.state)}
+											value={shouldShowMultiValues(values.state, 'city')}
+											required={!verifyValue(values.state)}
+										/>
+										<SelectComponent
+											label='Fonte de Renda'
+											size='lg:col-span-3'
+											handleChange={(e) =>
+												handleChangeSelect(e, 'incomingSource')
+											}
+											options={incomingSourcesData}
+											required={true}
+											value={values.incomingSource}
+										/>
+										<Input
+											label='O que precisa para sair das ruas?'
+											name='getOutReasons'
+											type='text'
+											value={values.getOutReasons}
+											required={true}
+											handleChange={handleChangeInput}
+											size='lg:col-span-3'
+										/>
+										<SelectComponent
+											label='Quer sair das ruas?'
+											size='lg:col-span-1'
+											handleChange={(e) => handleChangeSelect(e, 'getOut')}
+											options={'yesAndNo'}
+											required={true}
+											value={values.getOut}
+										/>
+										<SelectComponent
+											label='Motivos para estar na rua:'
+											size='lg:col-span-5'
+											handleChange={(e) => handleChangeSelect(e, 'reasons')}
+											options={reasonsData}
+											isMulti
+											required={true}
+											value={values.reasons}
+										/>
+										<SelectComponent
+											label='Caso especial?'
+											size='lg:col-span-1'
+											handleChange={(e) =>
+												handleChangeSelect(e, 'isEspecialCase')
+											}
+											options={'yesAndNo'}
+											required={true}
+											value={values.isEspecialCase}
+										/>
+										<SelectComponent
+											label='Se sim, quais casos?'
+											size='lg:col-span-5'
+											handleChange={(e) =>
+												handleChangeSelect(e, 'especialCases')
+											}
+											options={especialCasesData}
+											isDisabled={verifyValue(values.isEspecialCase)}
+											isMulti
+											required={!verifyValue(values.isEspecialCase)}
+											value={shouldShowMultiValues(
+												values.isEspecialCase,
+												'especialCases'
+											)}
+										/>
+										<SelectComponent
+											label='Recebe benefício?'
+											size='lg:col-span-1'
+											handleChange={(e) => handleChangeSelect(e, 'hasBenefits')}
+											options={'yesAndNo'}
+											required={true}
+											value={values.hasBenefits}
+										/>
+										<SelectComponent
+											label='Se sim, quais benefícios?'
+											size='lg:col-span-5'
+											handleChange={(e) => handleChangeSelect(e, 'benefits')}
+											options={benefitsData}
+											isDisabled={verifyValue(values.hasBenefits)}
+											isMulti
+											required={!verifyValue(values.hasBenefits)}
+											value={shouldShowMultiValues(
+												values.hasBenefits,
+												'benefits'
+											)}
+										/>
 									</div>
 								</div>
-
 								<div className='px-4 py-3 text-right bg-gray-50 sm:px-6'>
 									<button className='inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-md border border-transparent shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
 										Cadastrar

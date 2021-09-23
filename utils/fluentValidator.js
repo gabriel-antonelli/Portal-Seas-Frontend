@@ -8,10 +8,3 @@ export const verifyValue = (value) => {
 		'',
 	].includes(value);
 };
-
-export const shouldShowAnyValue = (needed, value) => {
-	if (!verifyValue(needed)) {
-		return value;
-	}
-	return null;
-};

@@ -47,7 +47,6 @@ export function withAuth(Component) {
 			if (typeof window !== 'undefined') {
 				const newFetch = await refetch();
 				await setLoading(newFetch.isLoading);
-				console.log(newFetch);
 				if (
 					GetCookie(process.env.NEXT_PUBLIC_TOKEN).tokenValue &&
 					newFetch.isSuccess &&
