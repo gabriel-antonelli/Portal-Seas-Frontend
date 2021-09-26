@@ -3,37 +3,62 @@ import Head from 'next/head';
 import { Description } from '../../components';
 import { withAuth } from '../../utils';
 import { useEffect, useState } from 'react';
+import { Pagination } from '../../components/list/pagination';
+import { ListItem } from '../../components/list/listItem';
 
 function Registries() {
 	const { data, isSuccess } = useListCitizensQuery();
 	const [citizensList, setCitizensList] = useState([]);
+	const [pages, setPages] = useState(1);
+	const [selectedPage, setSelectedPage] = useState(1);
 	const [inputValue, setInputValue] = useState('');
 
 	useEffect(() => {
 		if (isSuccess && data.success) {
 			setCitizensList(data.data.content);
+			setPages(23);
 		}
 	}, [isSuccess, data]);
+
+	const normalizeString = (str) => {
+		return str
+			.toString()
+			.toLowerCase()
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '');
+	};
+
+	const getAge = (year) => {
+		const today = new Date();
+		const birthDate = new Date(...year);
+		const yearsDifference = today.getFullYear() - birthDate.getFullYear();
+		if (
+			(today.getMonth() < birthDate.getMonth() ||
+				(today.getMonth() === birthDate.getMonth() &&
+					today.getDate() < birthDate.getDate())) && yearsDifference >= 1
+		) {
+			return (yearsDifference - 1).toString();
+		}
+		return yearsDifference.toString();
+	};
 
 	const filteredCitizensList = (searchValue) => {
 		return data.data.content.filter((item) => {
 			if (
-				item.nome.toUpperCase().includes(searchValue.toUpperCase()) ||
-				item.cidadeNascimento.nome
-					.toUpperCase()
-					.includes(searchValue.toUpperCase()) ||
-				item.cidadeNascimento.estado.nome
-					.toUpperCase()
-					.includes(searchValue.toUpperCase()) ||
-				item.sexo.nomeclatura
-					.toUpperCase()
-					.includes(searchValue.toUpperCase()) ||
-				item.cor.nomeclatura
-					.toUpperCase()
-					.includes(searchValue.toUpperCase()) ||
-				(new Date().getUTCFullYear() - item.dataNascimento[0])
-					.toLocaleString()
-					.includes(searchValue)
+				normalizeString(item.nome).includes(normalizeString(searchValue)) ||
+				normalizeString(item.cidadeNascimento.nome).includes(
+					normalizeString(searchValue),
+				) ||
+				normalizeString(item.cidadeNascimento.estado.nome).includes(
+					normalizeString(searchValue),
+				) ||
+				normalizeString(item.sexo.nomeclatura).includes(
+					normalizeString(searchValue),
+				) ||
+				normalizeString(item.cor.nomeclatura).includes(
+					normalizeString(searchValue),
+				) ||
+				getAge(item.dataNascimento).includes(searchValue)
 			) {
 				return item;
 			}
@@ -49,6 +74,16 @@ function Registries() {
 		}
 	};
 
+	const handlePage = (page) => {
+		if (page < 1) {
+			return setSelectedPage(pages);
+		}
+		if (page > pages) {
+			return setSelectedPage(1);
+		}
+		return setSelectedPage(page);
+	};
+
 	return (
 		<>
 			<Head>
@@ -61,7 +96,8 @@ function Registries() {
 						desc='Procure cidadãos e edite registros.'
 					/>
 					<div className='md:col-span-3 mx-3'>
-						<div className='sm:w-max w-auto lg:w-full h-auto bg-white rounded-lg shadow my-2 justify-center items-center flex'>
+						<div
+							className='sm:w-max w-auto lg:w-full h-auto bg-white rounded-lg shadow my-2 justify-center items-center flex'>
 							<input
 								type='text'
 								value={inputValue}
@@ -77,32 +113,18 @@ function Registries() {
 									return (
 										<li key={citizen.id}>
 											<div className='select-none cursor-pointer flex flex-1 p-4'>
-												<div className='flex-1 pl-1 mr-16'>
-													<div className='font-medium dark:text-white'>
-														{citizen.nome.toUpperCase()}
-													</div>
-													<div className='text-gray-600 dark:text-gray-200 text-sm'>
-														Idade:{' '}
-														{new Date().getUTCFullYear() -
-															citizen.dataNascimento[0]}
-													</div>
-												</div>
-												<div className='flex-1 pl-1 mr-16'>
-													<div className='font-medium dark:text-white'>
-														{citizen.cidadeNascimento.estado.nome.toUpperCase()}
-													</div>
-													<div className='text-gray-600 dark:text-gray-200 text-sm'>
-														{citizen.cidadeNascimento.nome.toUpperCase()}
-													</div>
-												</div>
-												<div className='flex-1 pl-1 mr-16'>
-													<div className='font-medium dark:text-white'>
-														{citizen.sexo.nomeclatura}
-													</div>
-													<div className='text-gray-600 dark:text-gray-200 text-sm'>
-														{citizen.cor.nomeclatura}
-													</div>
-												</div>
+												<ListItem
+													title={citizen.nome}
+													subtitle={'Idade: ' + getAge(citizen.dataNascimento)}
+												/>
+												<ListItem
+													title={citizen.cidadeNascimento.estado.nome}
+													subtitle={citizen.cidadeNascimento.nome}
+												/>
+												<ListItem
+													title={citizen.sexo.nomeclatura}
+													subtitle={citizen.cor.nomeclatura}
+												/>
 												<button className='w-24 text-right flex justify-end'>
 													<svg
 														width='20'
@@ -111,7 +133,8 @@ function Registries() {
 														className='hover:text-gray-800 dark:hover:text-white dark:text-gray-200 text-gray-500'
 														viewBox='0 0 1792 1792'
 														xmlns='http://www.w3.org/2000/svg'>
-														<path d='M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z' />
+														<path
+															d='M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z' />
 													</svg>
 												</button>
 											</div>
@@ -120,56 +143,11 @@ function Registries() {
 								})}
 							</ul>
 						</div>
-						<div className='px-3 py-3 flex flex-col xs:flex-row items-center xs:justify-between'>
-							<div className='flex items-center'>
-								<button
-									type='button'
-									className='w-full p-4 border text-base rounded-l-xl text-gray-600 bg-white hover:bg-gray-100'>
-									<svg
-										width='9'
-										fill='currentColor'
-										height='8'
-										className=''
-										viewBox='0 0 1792 1792'
-										xmlns='http://www.w3.org/2000/svg'>
-										<path d='M1427 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z' />
-									</svg>
-								</button>
-								<button
-									type='button'
-									className='w-full px-4 py-2 border-t border-b text-base text-indigo-500 bg-white hover:bg-gray-100 '>
-									1
-								</button>
-								<button
-									type='button'
-									className='w-full px-4 py-2 border text-base text-gray-600 bg-white hover:bg-gray-100'>
-									2
-								</button>
-								<button
-									type='button'
-									className='w-full px-4 py-2 border-t border-b text-base text-gray-600 bg-white hover:bg-gray-100'>
-									3
-								</button>
-								<button
-									type='button'
-									className='w-full px-4 py-2 border text-base text-gray-600 bg-white hover:bg-gray-100'>
-									4
-								</button>
-								<button
-									type='button'
-									className='w-full p-4 border-t border-b border-r text-base  rounded-r-xl text-gray-600 bg-white hover:bg-gray-100'>
-									<svg
-										width='9'
-										fill='currentColor'
-										height='8'
-										className=''
-										viewBox='0 0 1792 1792'
-										xmlns='http://www.w3.org/2000/svg'>
-										<path d='M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z' />
-									</svg>
-								</button>
-							</div>
-						</div>
+						<Pagination
+							pages={pages}
+							handleClick={handlePage}
+							selected={selectedPage}
+						/>
 					</div>
 				</div>
 			</div>
