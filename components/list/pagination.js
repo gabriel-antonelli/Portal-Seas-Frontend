@@ -1,20 +1,20 @@
 import { useEffect, useState } from 'react';
 
 export function Pagination(props) {
-
 	const [pagesArray, setPagesArray] = useState([]);
 
 	useEffect(() => {
 		const pages = Array.from({ length: props.pages }, (_, i) => i + 1);
-		const selected = props.selected !== pages.length ? props.selected : props.selected - 1;
-		if(selected > Math.max(...pagesArray)) {
+		const selected =
+			props.selected !== pages.length ? props.selected : props.selected - 1;
+		if (selected > Math.max(...pagesArray)) {
 			setPagesArray(pages.slice(selected - 1, selected + 4));
 		}
-		if(selected < Math.min(...pagesArray)){
-			setPagesArray(pages.slice(selected - 5,selected));
+		if (selected < Math.min(...pagesArray)) {
+			setPagesArray(pages.slice(selected - 5, selected));
 		}
-		if(selected === 1) {
-			setPagesArray(pages.slice(0, pages.length >= 7 ? 5 : pages.length))
+		if (selected === 1) {
+			setPagesArray(pages.slice(0, pages.length >= 7 ? 5 : pages.length));
 		}
 	}, [props.pages, props.selected]);
 

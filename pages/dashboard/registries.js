@@ -35,7 +35,8 @@ function Registries() {
 		if (
 			(today.getMonth() < birthDate.getMonth() ||
 				(today.getMonth() === birthDate.getMonth() &&
-					today.getDate() < birthDate.getDate())) && yearsDifference >= 1
+					today.getDate() < birthDate.getDate())) &&
+			yearsDifference >= 1
 		) {
 			return (yearsDifference - 1).toString();
 		}
@@ -47,16 +48,16 @@ function Registries() {
 			if (
 				normalizeString(item.nome).includes(normalizeString(searchValue)) ||
 				normalizeString(item.cidadeNascimento.nome).includes(
-					normalizeString(searchValue),
+					normalizeString(searchValue)
 				) ||
 				normalizeString(item.cidadeNascimento.estado.nome).includes(
-					normalizeString(searchValue),
+					normalizeString(searchValue)
 				) ||
 				normalizeString(item.sexo.nomeclatura).includes(
-					normalizeString(searchValue),
+					normalizeString(searchValue)
 				) ||
 				normalizeString(item.cor.nomeclatura).includes(
-					normalizeString(searchValue),
+					normalizeString(searchValue)
 				) ||
 				getAge(item.dataNascimento).includes(searchValue)
 			) {
@@ -96,8 +97,7 @@ function Registries() {
 						desc='Procure cidadãos e edite registros.'
 					/>
 					<div className='md:col-span-3 mx-3'>
-						<div
-							className='sm:w-max w-auto lg:w-full h-auto bg-white rounded-lg shadow my-2 justify-center items-center flex'>
+						<div className='sm:w-max w-auto lg:w-full h-auto bg-white rounded-lg shadow my-2 justify-center items-center flex'>
 							<input
 								type='text'
 								value={inputValue}
@@ -133,8 +133,7 @@ function Registries() {
 														className='hover:text-gray-800 dark:hover:text-white dark:text-gray-200 text-gray-500'
 														viewBox='0 0 1792 1792'
 														xmlns='http://www.w3.org/2000/svg'>
-														<path
-															d='M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z' />
+														<path d='M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z' />
 													</svg>
 												</button>
 											</div>
