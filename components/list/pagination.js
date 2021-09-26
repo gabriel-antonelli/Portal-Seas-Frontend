@@ -16,6 +16,7 @@ export function Pagination(props) {
 		if (selected === 1) {
 			setPagesArray(pages.slice(0, pages.length >= 7 ? 5 : pages.length));
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.pages, props.selected]);
 
 	return (
