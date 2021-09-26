@@ -15,7 +15,7 @@ export function SetToken(tokenValue) {
 
 export function LogOut() {
 	document.cookie = `${process.env.NEXT_PUBLIC_TOKEN}=; expires=Thu, 01 Jan 1970 00:00:00 UTC`;
-	Router.push('/');
+	Router.push('/login/loginPage');
 }
 
 export function GetCookie(name) {

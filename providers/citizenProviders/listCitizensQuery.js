@@ -4,11 +4,9 @@ import { useQuery } from 'react-query';
 export function useListCitizensQuery() {
 	const listCitizens = async () => {
 		return Requests({
-			url: 'cidadao',
+			url: 'cidadao?page=0',
 			type: 'get',
 		});
 	};
-	return useQuery('listCitizens', listCitizens, {
-		refetchOnWindowFocus: false,
-	});
+	return useQuery('listCitizens', listCitizens, {});
 }

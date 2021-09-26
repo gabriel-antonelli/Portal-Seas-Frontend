@@ -21,6 +21,9 @@ function classNames(...classes) {
 export function NavBar() {
 	const router = useRouter();
 	const checkRoute = (item) => {
+		if (item === '/dashboard') {
+			return router.asPath.endsWith(item) || router.asPath.endsWith('/');
+		}
 		return router.asPath.endsWith(item);
 	};
 
