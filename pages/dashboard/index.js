@@ -64,7 +64,11 @@ function Dashboard() {
 						title='Cadastro de cidadão'
 						desc='Preencha as informações necessárias para cadastrar um cidadão.'
 					/>
-					<CitizenForm submitFunction={handleSubmit} allRequired={true} shouldClearValues={clear} />
+					<CitizenForm
+						submitFunction={handleSubmit}
+						allRequired={true}
+						shouldClearValues={clear}
+					/>
 				</div>
 			</div>
 		</>

@@ -11,9 +11,9 @@ export const verifyValue = (value) => {
 
 const getIdsOnly = (array) => {
 	const newArray = [];
-	array.forEach(e => newArray.push(e.id));
+	array.forEach((e) => newArray.push(e.id));
 	return newArray;
-}
+};
 
 export const convertValues = (values, send) => {
 	if (send) {
@@ -42,12 +42,9 @@ export const convertValues = (values, send) => {
 		state: values.cidadeNascimento.estado.id,
 		incomingSource: values.fonteDeRenda.id,
 		getOutReasons: values.precisaParaSairRua,
-		getOut: values.querSairDasRuas ? "Sim" : "Não",
+		getOut: values.querSairDasRuas ? 'Sim' : 'Não',
 		reasons: getIdsOnly(values.motivos),
-		isEspecialCase: values.casosEspeciais.length > 0 ? "Sim" : "Não",
-		hasBenefits: values.beneficios.length > 0 ? "Sim" : "Não",
+		isEspecialCase: values.casosEspeciais.length > 0 ? 'Sim' : 'Não',
+		hasBenefits: values.beneficios.length > 0 ? 'Sim' : 'Não',
 	};
 };
-
-
-

@@ -13,7 +13,13 @@ import { verifyValue } from '../../utils';
 import { Input } from './input';
 import { SelectComponent } from './select';
 
-export function CitizenForm({ submitFunction, buttonText, allRequired, shouldClearValues, editValues }) {
+export function CitizenForm({
+	submitFunction,
+	buttonText,
+	allRequired,
+	shouldClearValues,
+	editValues,
+}) {
 	const [values, setValues] = useState({});
 	const { data: sexData } = useListSexQuery();
 	const { data: colorsData } = useListColorsQuery();
@@ -22,7 +28,7 @@ export function CitizenForm({ submitFunction, buttonText, allRequired, shouldCle
 	const { data: especialCasesData } = useListEspecialCasesQuery();
 	const { data: statesData } = useListStatesQuery();
 	const { data: citiesData, refetch: fetchCities } = useListCitiesQuery(
-		values['state'],
+		values['state']
 	);
 	const { data: incomingSourcesData } = useIncomeSourcesQuery();
 
@@ -34,14 +40,14 @@ export function CitizenForm({ submitFunction, buttonText, allRequired, shouldCle
 
 	const clearValues = () => {
 		setValues({});
-	}
+	};
 
 	useEffect(() => {
-		if(shouldClearValues) {
+		if (shouldClearValues) {
 			clearValues();
 		}
-		setValues(editValues)
-	}, [shouldClearValues, editValues])
+		setValues(editValues);
+	}, [shouldClearValues, editValues]);
 
 	const handleChangeInput = (e) => {
 		const auxValues = { ...values };
@@ -122,9 +128,7 @@ export function CitizenForm({ submitFunction, buttonText, allRequired, shouldCle
 										type='date'
 										onChange={handleChangeInput}
 										required={allRequired}
-										value={
-											values.birthday === undefined ? '' : values.birthday
-										}
+										value={values.birthday === undefined ? '' : values.birthday}
 										className='block mt-1 w-full rounded-md border-gray-300 shadow-sm cursor-pointer focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
 									/>
 								</div>
@@ -150,9 +154,7 @@ export function CitizenForm({ submitFunction, buttonText, allRequired, shouldCle
 								<SelectComponent
 									label='Fonte de Renda'
 									size='lg:col-span-3'
-									handleChange={(e) =>
-										handleChangeSelect(e, 'incomingSource')
-									}
+									handleChange={(e) => handleChangeSelect(e, 'incomingSource')}
 									options={incomingSourcesData}
 									required={allRequired}
 									value={values.incomingSource}
@@ -186,9 +188,7 @@ export function CitizenForm({ submitFunction, buttonText, allRequired, shouldCle
 								<SelectComponent
 									label='Caso especial?'
 									size='sm:col-span-2'
-									handleChange={(e) =>
-										handleChangeSelect(e, 'isEspecialCase')
-									}
+									handleChange={(e) => handleChangeSelect(e, 'isEspecialCase')}
 									options={'yesAndNo'}
 									required={allRequired}
 									value={values.isEspecialCase}
@@ -196,16 +196,18 @@ export function CitizenForm({ submitFunction, buttonText, allRequired, shouldCle
 								<SelectComponent
 									label='Se sim, quais casos?'
 									size='lg:col-span-4'
-									handleChange={(e) =>
-										handleChangeSelect(e, 'especialCases')
-									}
+									handleChange={(e) => handleChangeSelect(e, 'especialCases')}
 									options={especialCasesData}
 									isDisabled={verifyValue(values.isEspecialCase)}
 									isMulti
-									required={allRequired === true ? !verifyValue(values.isEspecialCase) : false}
+									required={
+										allRequired === true
+											? !verifyValue(values.isEspecialCase)
+											: false
+									}
 									value={shouldShowMultiValues(
 										values.isEspecialCase,
-										'especialCases',
+										'especialCases'
 									)}
 								/>
 								<SelectComponent
@@ -223,23 +225,24 @@ export function CitizenForm({ submitFunction, buttonText, allRequired, shouldCle
 									options={benefitsData}
 									isDisabled={verifyValue(values.hasBenefits)}
 									isMulti
-									required={allRequired === true ? !verifyValue(values.hasBenefits) : false}
-									value={shouldShowMultiValues(
-										values.hasBenefits,
-										'benefits',
-									)}
+									required={
+										allRequired === true
+											? !verifyValue(values.hasBenefits)
+											: false
+									}
+									value={shouldShowMultiValues(values.hasBenefits, 'benefits')}
 								/>
 							</div>
 						</div>
 						<div className='px-4 py-3 text-right bg-gray-50 sm:px-6'>
 							<button
-								type="button"
+								type='button'
 								onClick={() => clearValues()}
 								className='inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-md border border-transparent shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-3'>
 								Limpar
 							</button>
 							<button
-								type="submit"
+								type='submit'
 								className='inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-700 rounded-md border border-transparent shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
 								{buttonText ? buttonText : 'Cadastrar'}
 							</button>

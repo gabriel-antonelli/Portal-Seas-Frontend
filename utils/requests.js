@@ -28,7 +28,11 @@ export async function Requests(options) {
 		}
 		if (options.params) {
 			// eslint-disable-next-line no-unused-vars
-			const searchParams = Object.fromEntries(Object.entries(options.params).filter(([_, v]) => v !== null && v !== undefined));
+			const searchParams = Object.fromEntries(
+				Object.entries(options.params).filter(
+					([_, v]) => v !== null && v !== undefined
+				)
+			);
 			url.search = new URLSearchParams(searchParams).toString();
 		}
 		const res = await fetch(url.toString(), init);

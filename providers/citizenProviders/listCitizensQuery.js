@@ -14,7 +14,7 @@ export function useListCitizensQuery(page, values) {
 			type: 'get',
 			params: {
 				...values,
-				page: page
+				page: page,
 			},
 		});
 	};

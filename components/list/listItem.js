@@ -4,9 +4,7 @@ export function ListItem(props) {
 			<div className='font-medium text-sm mr-1'>
 				{props.title.toUpperCase()}
 			</div>
-			<div className='text-gray-600 text-sm'>
-				{props.subtitle}
-			</div>
+			<div className='text-gray-600 text-sm'>{props.subtitle}</div>
 		</div>
 	);
 }

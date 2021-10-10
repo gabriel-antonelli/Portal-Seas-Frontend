@@ -16,7 +16,10 @@ function Registries() {
 	const [pages, setPages] = useState(1);
 	const [selectedPage, setSelectedPage] = useState(1);
 	const [inputValue, setInputValue] = useState('');
-	const { data, isSuccess, refetch } = useListCitizensQuery(selectedPage, values);
+	const { data, isSuccess, refetch } = useListCitizensQuery(
+		selectedPage,
+		values
+	);
 
 	useEffect(() => {
 		if (isSuccess && data.success) {
@@ -55,7 +58,8 @@ function Registries() {
 			.toString()
 			.toLowerCase()
 			.normalize('NFD')
-			.replace(/[\u0300-\u036f]/g, '').replace(/ /g, '');
+			.replace(/[\u0300-\u036f]/g, '')
+			.replace(/ /g, '');
 	};
 
 	const getAge = (year) => {
@@ -78,16 +82,16 @@ function Registries() {
 			if (
 				normalizeString(item.nome).includes(normalizeString(searchValue)) ||
 				normalizeString(item.cidadeNascimento.nome).includes(
-					normalizeString(searchValue),
+					normalizeString(searchValue)
 				) ||
 				normalizeString(item.cidadeNascimento.estado.nome).includes(
-					normalizeString(searchValue),
+					normalizeString(searchValue)
 				) ||
 				normalizeString(item.sexo.nomeclatura).includes(
-					normalizeString(searchValue),
+					normalizeString(searchValue)
 				) ||
 				normalizeString(item.cor.nomeclatura).includes(
-					normalizeString(searchValue),
+					normalizeString(searchValue)
 				) ||
 				getAge(item.dataNascimento).includes(searchValue)
 			) {
@@ -143,13 +147,14 @@ function Registries() {
 							<CitizenForm
 								editValues={editValues}
 								submitFunction={handleSubmit}
-								buttonText={Object.keys(editValues).length > 0 ? 'Editar' : 'Buscar'}
+								buttonText={
+									Object.keys(editValues).length > 0 ? 'Editar' : 'Buscar'
+								}
 							/>
 						</div>
 					</div>
 					<div className='md:col-span-2 mx-3'>
-						<div
-							className='sm:w-max w-auto lg:w-full h-auto bg-white rounded-lg shadow my-2 justify-center items-center flex'>
+						<div className='sm:w-max w-auto lg:w-full h-auto bg-white rounded-lg shadow my-2 justify-center items-center flex'>
 							<input
 								type='text'
 								value={inputValue}
@@ -178,9 +183,9 @@ function Registries() {
 													title={citizen.sexo.nomeclatura}
 													subtitle={citizen.cor.nomeclatura}
 												/>
-												<button className='text-right flex justify-end'
-																onClick={() => setEditValues(convertValues(citizen))}
-												>
+												<button
+													className='text-right flex justify-end'
+													onClick={() => setEditValues(convertValues(citizen))}>
 													<svg
 														width='20'
 														fill='currentColor'
@@ -188,8 +193,7 @@ function Registries() {
 														className='hover:text-gray-800 text-gray-500'
 														viewBox='0 0 1792 1792'
 														xmlns='http://www.w3.org/2000/svg'>
-														<path
-															d='M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z' />
+														<path d='M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z' />
 													</svg>
 												</button>
 											</div>
