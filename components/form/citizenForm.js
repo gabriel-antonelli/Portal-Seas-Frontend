@@ -46,7 +46,9 @@ export function CitizenForm({
 		if (shouldClearValues) {
 			clearValues();
 		}
-		setValues(editValues);
+		if (editValues) {
+			setValues(editValues);
+		}
 	}, [shouldClearValues, editValues]);
 
 	const handleChangeInput = (e) => {
