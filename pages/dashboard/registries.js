@@ -1,31 +1,61 @@
 import { useListCitizensQuery } from '../../providers/citizenProviders/listCitizensQuery';
 import Head from 'next/head';
-import { Description } from '../../components';
-import { withAuth } from '../../utils';
+import { Alert, Description, Loading } from '../../components';
+import { convertValues, withAuth } from '../../utils';
 import { useEffect, useState } from 'react';
 import { Pagination } from '../../components/list/pagination';
 import { ListItem } from '../../components/list/listItem';
+import { CitizenForm } from '../../components/form';
 
 function Registries() {
-	const { data, isSuccess } = useListCitizensQuery();
 	const [citizensList, setCitizensList] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [values, setValues] = useState({});
+	const [editValues, setEditValues] = useState({});
+	const [alert, setAlert] = useState({ show: false });
 	const [pages, setPages] = useState(1);
 	const [selectedPage, setSelectedPage] = useState(1);
 	const [inputValue, setInputValue] = useState('');
+	const { data, isSuccess, refetch } = useListCitizensQuery(selectedPage, values);
 
 	useEffect(() => {
 		if (isSuccess && data.success) {
 			setCitizensList(data.data.content);
-			setPages(23);
+			setPages(data.data.totalPages);
 		}
 	}, [isSuccess, data]);
+
+	useEffect(() => {
+		const fetchNewPage = async () => {
+			setLoading(true);
+			await refetch();
+			setLoading(false);
+		};
+		fetchNewPage();
+	}, [refetch, selectedPage]);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			setLoading(true);
+			const newFetch = await refetch();
+			if (newFetch.data.status !== 200 || newFetch.isError) {
+				setAlert({
+					show: true,
+					label: 'Não foi possível buscar pelos cidadãos.',
+					type: 'Erro',
+				});
+			}
+			setLoading(false);
+		};
+		fetchData();
+	}, [refetch, values]);
 
 	const normalizeString = (str) => {
 		return str
 			.toString()
 			.toLowerCase()
 			.normalize('NFD')
-			.replace(/[\u0300-\u036f]/g, '');
+			.replace(/[\u0300-\u036f]/g, '').replace(/ /g, '');
 	};
 
 	const getAge = (year) => {
@@ -48,16 +78,16 @@ function Registries() {
 			if (
 				normalizeString(item.nome).includes(normalizeString(searchValue)) ||
 				normalizeString(item.cidadeNascimento.nome).includes(
-					normalizeString(searchValue)
+					normalizeString(searchValue),
 				) ||
 				normalizeString(item.cidadeNascimento.estado.nome).includes(
-					normalizeString(searchValue)
+					normalizeString(searchValue),
 				) ||
 				normalizeString(item.sexo.nomeclatura).includes(
-					normalizeString(searchValue)
+					normalizeString(searchValue),
 				) ||
 				normalizeString(item.cor.nomeclatura).includes(
-					normalizeString(searchValue)
+					normalizeString(searchValue),
 				) ||
 				getAge(item.dataNascimento).includes(searchValue)
 			) {
@@ -82,22 +112,44 @@ function Registries() {
 		if (page > pages) {
 			return setSelectedPage(1);
 		}
-		return setSelectedPage(page);
+		setSelectedPage(page);
+	};
+
+	const handleSubmit = (e, formValues) => {
+		e.preventDefault();
+		setValues(formValues);
 	};
 
 	return (
 		<>
+			<Loading show={loading} />
+			<Alert
+				show={alert.show}
+				func={() => setAlert({ show: !alert.show })}
+				label={alert.label}
+				type={alert.type}
+			/>
 			<Head>
 				<title>Cadastro de Cidadão</title>
 			</Head>
-			<div className='justify-center items-center mt-10'>
-				<div className='md:grid md:grid-cols-4'>
-					<Description
-						title='Listagem de cidadão'
-						desc='Procure cidadãos e edite registros.'
-					/>
-					<div className='md:col-span-3 mx-3'>
-						<div className='sm:w-max w-auto lg:w-full h-auto bg-white rounded-lg shadow my-2 justify-center items-center flex'>
+			<div className='justify-center items-center mt-5'>
+				<div className='md:grid md:grid-cols-3'>
+					<div>
+						<Description
+							title='Listagem de cidadão'
+							desc='Procure cidadãos e edite registros.'
+						/>
+						<div className='sm:ml-7 mt-2'>
+							<CitizenForm
+								editValues={editValues}
+								submitFunction={handleSubmit}
+								buttonText={Object.keys(editValues).length > 0 ? 'Editar' : 'Buscar'}
+							/>
+						</div>
+					</div>
+					<div className='md:col-span-2 mx-3'>
+						<div
+							className='sm:w-max w-auto lg:w-full h-auto bg-white rounded-lg shadow my-2 justify-center items-center flex'>
 							<input
 								type='text'
 								value={inputValue}
@@ -122,18 +174,22 @@ function Registries() {
 													subtitle={citizen.cidadeNascimento.nome}
 												/>
 												<ListItem
+													className='sm:hidden'
 													title={citizen.sexo.nomeclatura}
 													subtitle={citizen.cor.nomeclatura}
 												/>
-												<button className='w-24 text-right flex justify-end'>
+												<button className='text-right flex justify-end'
+																onClick={() => setEditValues(convertValues(citizen))}
+												>
 													<svg
 														width='20'
 														fill='currentColor'
 														height='20'
-														className='hover:text-gray-800 dark:hover:text-white dark:text-gray-200 text-gray-500'
+														className='hover:text-gray-800 text-gray-500'
 														viewBox='0 0 1792 1792'
 														xmlns='http://www.w3.org/2000/svg'>
-														<path d='M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z' />
+														<path
+															d='M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z' />
 													</svg>
 												</button>
 											</div>
