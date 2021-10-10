@@ -27,7 +27,13 @@ export async function Requests(options) {
 			};
 		}
 		if (options.params) {
-			url.search = new URLSearchParams(options.params).toString();
+			// eslint-disable-next-line no-unused-vars
+			const searchParams = Object.fromEntries(
+				Object.entries(options.params).filter(
+					([_, v]) => v !== null && v !== undefined
+				)
+			);
+			url.search = new URLSearchParams(searchParams).toString();
 		}
 		const res = await fetch(url.toString(), init);
 		return { data: await res.json(), success: res.ok, status: res.status };
