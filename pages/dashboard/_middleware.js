@@ -5,9 +5,11 @@ export default async function middleware(req) {
 	// fetch(process.env.NEXT_PUBLIC_API_URL + 'cor', {
 	// headers: { Authorization: req.cookies[process.env.NEXT_PUBLIC_TOKEN] },
 	// });
+	const url = req.nextUrl.clone();
+	url.pathname = '/login/loginPage'
 	if (ok) {
 		return NextResponse.next();
 	} else if (req.nextUrl.href !== '/login/loginPage') {
-		return NextResponse.redirect('/login/loginPage');
+		return NextResponse.redirect(url);
 	}
 }
