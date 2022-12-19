@@ -6,10 +6,11 @@ export default async function middleware(req) {
 	// headers: { Authorization: req.cookies[process.env.NEXT_PUBLIC_TOKEN] },
 	// });
 	const url = req.nextUrl.clone();
+	console.log(url);
 	if (ok) {
 		return NextResponse.next();
 	} else if (req.nextUrl.href !== '/login/loginPage') {
-		url.pathname = '/login/loginPage';
+		url.pathname = '/dashboard';
 		return NextResponse.redirect(url);
 	}
 }
